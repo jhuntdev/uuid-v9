@@ -1,8 +1,8 @@
 # UUIDv9
 
-An ultra-fast, lightweight, zero-dependency JavaScript/TypeScript implementation of JHunt's UUID v9 proposal. This UUID format allows generating both time-based sequential and random nonsequential IDs with an optional prefix of up to 12 hexadecimal characters, all with sufficient randomness to avoid collisions.
+An ultra-fast, lightweight, zero-dependency JavaScript/TypeScript implementation of JHunt's UUID v9 proposal. The UUID v9 format allows generating both time-based sequential and random nonsequential IDs with an optional prefix of up to 12 hexadecimal characters, all with sufficient randomness to avoid collisions.
 
-To learn more about UUID v9, please visit the website: https://uuidv9.jhunt.dev
+// To learn more about UUID v9, please visit the website: https://uuidv9.jhunt.dev
 
 ## Installation
 
