@@ -17,16 +17,16 @@ const validatePrefix = (prefix:string):void => {
 }
 
 const addDashes = (str:string):string => {
-    return `${str.substring(0, 8)}-${str.substring(8, 12)}-${str.substring(12, 16)}-${str.substring(16, 20)}-${str.substring(20)}`
+    return `${str.substring(0, 8)}-${str.substring(8, 12)}-9${str.substring(12, 15)}-${str.substring(15, 19)}-${str.substring(19)}`
 }
 
-const uuidv9 = (prefix:string = '', timestamp = true):string => {
+const uuidv9 = (prefix:string = '', timestamp:boolean = true):string => {
     if (prefix) {
         validatePrefix(prefix)
         prefix = prefix.toLowerCase()
     }
     const center:string = timestamp ? new Date().getTime().toString(16) : ''
-    const suffix:string = randomBytes(32 - prefix.length - center.length)
+    const suffix:string = randomBytes(32 - prefix.length - center.length - 1)
     const joined:string = prefix + center + suffix
     return addDashes(joined)
 }

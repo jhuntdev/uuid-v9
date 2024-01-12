@@ -19,7 +19,7 @@ const validatePrefix = (prefix) => {
         throw new Error('Prefix must be only hexadecimal characters');
 };
 const addDashes = (str) => {
-    return `${str.substring(0, 8)}-${str.substring(8, 12)}-${str.substring(12, 16)}-${str.substring(16, 20)}-${str.substring(20)}`;
+    return `${str.substring(0, 8)}-${str.substring(8, 12)}-9${str.substring(12, 15)}-${str.substring(15, 19)}-${str.substring(19)}`;
 };
 const uuidv9 = (prefix = '', timestamp = true) => {
     if (prefix) {
@@ -27,7 +27,7 @@ const uuidv9 = (prefix = '', timestamp = true) => {
         prefix = prefix.toLowerCase();
     }
     const center = timestamp ? new Date().getTime().toString(16) : '';
-    const suffix = randomBytes(32 - prefix.length - center.length);
+    const suffix = randomBytes(32 - prefix.length - center.length - 1);
     const joined = prefix + center + suffix;
     return addDashes(joined);
 };

@@ -28,6 +28,16 @@ const unorderedId = uuidv9('', false)
 const prefixedUnorderedId = uuidv9('a1b2c3d4', false)
 ```
 
+## Note
+
+Some UUID validators will not recognize v9 as a valid UUID even though it is. Three possible solutions are:
+
+1) Write your own validator (recommended)
+2) Bypass the validator (not recommended)
+3) Substitute the version digit for an earlier version that will pass (not recommended)
+
+Here is the UUID v9 format (note the "9" version digit): `xxxxxxxx-xxxx-9xxx-xxxx-xxxxxxxxxxxx`
+
 ## License
 
 This project is licensed under the [MIT License](LICENSE).
