@@ -6,7 +6,7 @@ The proposed UUID v9 format allows generating both time-based sequential and ran
 
 ## Languages
 
-[JavaScript/TypeScript](js)
+JavaScript/TypeScript - (https://www.npmjs.com/package/uuid-v9)
 
 More coming soon!
 
