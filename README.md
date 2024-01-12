@@ -1,4 +1,4 @@
-# UUIDv9
+# UUID v9
 
 The proposed UUID v9 format allows generating both time-based sequential and random nonsequential IDs with an optional prefix of up to 12 hexadecimal characters, all with sufficient randomness to avoid collisions.
 
@@ -7,6 +7,7 @@ The proposed UUID v9 format allows generating both time-based sequential and ran
 ## Languages
 
 [JavaScript/TypeScript](js)
+More coming soon!
 
 ## License
 
