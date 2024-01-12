@@ -10,17 +10,17 @@ Install UUIDv9 from npm
 
 With npm:
 ```bash
-npm install --save uuidv9
+npm install --save uuid-v9
 ```
 or using yarn:
 ```bash
-yarn add uuidv9
+yarn add uuid-v9
 ```
 
 ## Usage
 
 ```javascript
-import uuidv9 from 'uuidv9' 
+import uuidv9 from 'uuid-v9' 
 
 const orderedId = uuidv9()
 const prefixedOrderedId = uuidv9('4815e732') // up to 12 hexadecimal characters

@@ -1,6 +1,6 @@
 {
   "name": "uuid-v9",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "An ultra-fast, lightweight, zero-dependency JavaScript/TypeScript implementation of JHunt's UUID v9 proposal.",
   "keywords": [
     "uuid",
