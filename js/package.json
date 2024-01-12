@@ -1,7 +1,7 @@
 {
   "name": "uuid-v9",
-  "version": "0.0.2",
-  "description": "An ultra-fast, lightweight, zero-dependency JavaScript/TypeScript implementation of JHunt's UUID v9 proposal.",
+  "version": "0.0.3",
+  "description": "An ultra-fast, lightweight, zero-dependency JavaScript/TypeScript implementation of the UUID v9 proposal.",
   "keywords": [
     "uuid",
     "uuidv9",
@@ -16,14 +16,14 @@
   "types": "dist/index.d.ts",
   "repository": {
     "type": "git",
-    "url": "https://github.com/jhuntdev/uuidv9"
+    "url": "https://github.com/jhuntdev/uuid-v9"
   },
   "scripts": {
     "build": "tsc",
     "watch": "tsc -w",
     "test": "mocha ./test"
   },
-  "author": "JHunt <uuidv9@jhunt.dev>",
+  "author": "JHunt <hello@jhunt.dev>",
   "license": "MIT",
   "devDependencies": {
     "mocha": "10.2.0",
