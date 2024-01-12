@@ -6,7 +6,7 @@ An ultra-fast, lightweight, zero-dependency JavaScript/TypeScript implementation
 
 ## Installation
 
-Install UUIDv9 from npm
+Install uuid-v9 from npm
 
 With npm:
 ```bash
@@ -23,9 +23,9 @@ yarn add uuid-v9
 import uuidv9 from 'uuid-v9' 
 
 const orderedId = uuidv9()
-const prefixedOrderedId = uuidv9('4815e732') // up to 12 hexadecimal characters
+const prefixedOrderedId = uuidv9('a1b2c3d4') // up to 12 hexadecimal characters
 const unorderedId = uuidv9('', false)
-const prefixedUnorderedId = uuidv9('4815e732', false)
+const prefixedUnorderedId = uuidv9('a1b2c3d4', false)
 ```
 
 ## License
