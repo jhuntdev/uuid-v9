@@ -1,11 +1,14 @@
 {
   "name": "uuid-v9",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "An ultra-fast, lightweight, zero-dependency JavaScript/TypeScript implementation of the UUID v9 proposal.",
   "keywords": [
     "uuid",
     "uuidv9",
     "v9",
+    "prefix",
+    "version",
+    "checksum",
     "javascript",
     "typescript",
     "node",

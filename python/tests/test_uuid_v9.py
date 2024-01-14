@@ -1,7 +1,7 @@
 import unittest
 import re
 import time
-from uuid_v9 import uuid
+from uuid_v9 import uuid, verify_checksum
 
 uuid_regex = {
     'v9': re.compile(r'^[0-9a-f]{8}-[0-9a-f]{4}-9[0-9a-f]{3}-[0-9a-f]{4}-[0-9a-f]{12}$', re.I),
@@ -75,9 +75,15 @@ class TestUuidV9(unittest.TestCase):
         self.assertEqual(idNs[:8], 'a1b2c3d4')
         self.assertNotEqual(idS[14:18], idNs[14:18])
 
-    def test_generate_ids_with_checksum(self):
-        id = uuid('', True, True)
+    def test_generate_ids_without_version(self):
+        id = uuid('', True, False)
         self.assertTrue(bool(id))
+        self.assertTrue(uuid_regex['generic'].match(id))
+
+    def test_generate_ids_with_checksum(self):
+        id = uuid('', True, True, True)
+        self.assertTrue(bool(id))
+        self.assertTrue(verify_checksum(id))
         self.assertTrue(uuid_regex['v9'].match(id))
         self.assertTrue(uuid_regex['generic'].match(id))
 

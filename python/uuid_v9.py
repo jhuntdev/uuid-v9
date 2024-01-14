@@ -2,10 +2,20 @@ import re
 import random
 import time
 
+uuid_regex = re.compile(r'^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$', re.IGNORECASE)
 uuidv9_regex = re.compile(r'^[0-9a-f]{8}-[0-9a-f]{4}-9[0-9a-f]{3}-[0-9a-f]{4}-[0-9a-f]{12}$', re.IGNORECASE)
 
-def is_uuidv9(str_to_test):
-    return isinstance(str_to_test, str) and uuidv9-regex.match(str_to_test)
+def verify_checksum(id):
+    clean_id = id.replace('-', '')
+    decimals = [int(char, 16) for char in clean_id[0:31]]
+    checksum = sum(decimals) % 16
+    return (format(checksum, 'x') == clean_id[31:32])
+
+def is_uuid(uuid, checksum=False):
+    return isinstance(uuid, str) and uuid_regex.match(uuid) and (not checksum or verify_checksum(uuid))
+
+def is_uuidv9(uuid, checksum=False):
+    return isinstance(uuid, str) and uuidv9_regex.match(uuid) and (not checksum or verify_checksum(uuid))
 
 def random_bytes(count):
     return ''.join(random.choice('0123456789abcdef') for _ in range(count))
@@ -24,29 +34,32 @@ def validate_prefix(prefix):
         raise ValueError('Prefix must be only hexadecimal characters')
 
 def add_dashes(str):
-    return f'{str[:8]}-{str[8:12]}-9{str[12:15]}-{str[15:19]}-{str[19:]}'
+    return f'{str[:8]}-{str[8:12]}-{str[12:16]}-{str[16:20]}-{str[20:]}'
 
-def calc_checksum(str):
-    decimals = [int(char, 16) for char in str]
+def calc_checksum(string):
+    decimals = [int(char, 16) for char in string]
     checksum = sum(decimals) % 16
     return format(checksum, 'x')
 
-def uuid(prefix='', timestamp=True, checksum=False):
+def uuid(prefix='', timestamp=True, version=True, checksum=False):
     if prefix:
         validate_prefix(prefix)
         prefix = prefix.lower()
     center = hex(int(time.time_ns() / 1000000))[2:] if timestamp else ''
-    suffix = random_bytes(32 - len(prefix) - len(center) - (2 if checksum else 1))
+    suffix = random_bytes(32 - len(prefix) - len(center) - (1 if version else 0) - (1 if checksum else 0))
     joined = prefix + center + suffix
+    if version:
+        joined = joined[:12] + '9' + joined[12:]
     if checksum:
         joined += calc_checksum(joined)
     return add_dashes(joined)
 
 if __name__ == "__main__":
     import argparse
-    parser = argparse.ArgumentParser(description="Generate a string based on specified arguments.")
-    parser.add_argument("--prefix", type=str, default="", help="Include a prefix")
-    parser.add_argument("--unordered", action="store_true", help="Omit the timestamp")
-    parser.add_argument("--checksum", action="store_true", help="Include checksum digit")
+    parser = argparse.ArgumentParser(description="Generate a UUID v9.")
+    parser.add_argument("--prefix", dest="prefix", default="", help="Include a prefix (default: '')")
+    parser.add_argument("--unordered", dest="timestamp", action="store_false", help="Exclude timestamp (default: True)")
+    parser.add_argument("--noversion", dest="version", action="store_false", help="Exclude version (default: True)")
+    parser.add_argument("--checksum", dest="checksum", action="store_true", help="Include checksum (default: False)")
     args = parser.parse_args()
-    print(uuid(args.prefix, not args.unordered, args.checksum))
+    print(uuid(args.prefix, args.timestamp, args.version, args.checksum))
