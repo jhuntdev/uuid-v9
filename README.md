@@ -1,8 +1,8 @@
 # UUID v9
 
-The proposed UUID v9 format allows generating both time-based sequential and random non-sequential IDs with an optional prefix of up to 12 hexadecimal characters and sufficient randomness to avoid collisions.
+The proposed UUID v9 format allows generating both time-based sequential and random non-sequential IDs with an optional prefix of up to 8 hexadecimal characters, an optional checksum digit, and sufficient randomness to avoid collisions.
 
-<!-- To learn more about UUID v9, please visit the website: https://uuid.jhunt.dev -->
+<!-- To learn more about UUID v9, please visit the website: https://uuid-v9.jhunt.dev -->
 
 ## Languages
 
