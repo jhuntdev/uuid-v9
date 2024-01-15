@@ -46,10 +46,10 @@ Some UUID validators will not recognize v9 as a valid UUID even though it is. Th
 2) Bypass the validator (not recommended)
 3) Substitute the version digit for an earlier version that will pass (not recommended)
 
-Here is the UUID v9 format: `xxxxxxxx-xxxx-9xxx-xxxx-xxxxxxxxxxxy`
+Here is the UUID v9 format: `xxxxxxxx-xxxx-9xxx-xxxx-xxxxxxxxxxyy`
 
-x = 0-9a-f (prefix, timestamp, random)
-9 = version
+x = prefix/timestamp/random
+9 = version (optional)
 y = checksum (optional)
 
 ## License

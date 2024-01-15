@@ -5,7 +5,7 @@ with open("README.md", encoding="utf-8") as readme_file:
 
 setup(
     name="uuid-v9",
-    version="0.0.1",
+    version="0.0.2",
     author="JHunt",
     author_email="hello@jhunt.dev",
     description="An ultra-fast, lightweight, zero-dependency Python implementation of the UUID v9 proposal.",
