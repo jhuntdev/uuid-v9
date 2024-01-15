@@ -48,9 +48,7 @@ Some UUID validators will not recognize v9 as a valid UUID even though it is. Th
 
 Here is the UUID v9 format: `xxxxxxxx-xxxx-9xxx-xxxx-xxxxxxxxxxyy`
 
-x = prefix/timestamp/random
-9 = version (optional)
-y = checksum (optional)
+x = prefix/timestamp/random, 9 = version (optional), y = checksum (optional)
 
 ## License
 
