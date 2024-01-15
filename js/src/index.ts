@@ -1,11 +1,41 @@
 export const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 export const uuidV9Regex = /^[0-9a-f]{8}-[0-9a-f]{4}-9[0-9a-f]{3}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 
-export const verifyChecksum = (id:string):boolean => {
-    const decimals = id.replace(/-/g, '').substring(0, 31).split('')
-    const checksum = decimals.reduce((sum, value) => sum + parseInt(value, 16), 0) % 16
-    return id.substring(35, 36) === checksum.toString(16)
+function calcChecksum(hexString: string): string { // CRC-8
+    const data: number[] = hexString.match(/.{1,2}/g)!.map(byte => parseInt(byte, 16))
+    const polynomial: number = 0x07
+    let crc: number = 0x00
+    for (const byte of data) {
+        crc ^= byte
+        for (let i = 0; i < 8; i++) {
+            if (crc & 0x80) {
+                crc = (crc << 1) ^ polynomial
+            } else {
+                crc <<= 1
+            }
+        }
+    }
+    return (crc & 0xFF).toString(16)
+    // return (crc & 0xF).toString(16)
 }
+
+export const verifyChecksum = (uuid:string) => {
+    const base16String = uuid.replace(/-/g, '').substring(0, 30)
+    const crc = calcChecksum(base16String)
+    return crc === uuid.substring(34, 36)
+}
+
+// const calcChecksum = (str:string) => {
+//     const decimals = str.split('') // .map((char:string) => )
+//     const checksum = decimals.reduce((sum, value) => sum + parseInt(value, 16), 0) % 16
+//     return checksum.toString(16)
+// }
+
+// export const verifyChecksum = (id:string):boolean => {
+//     const decimals = id.replace(/-/g, '').substring(0, 31).split('')
+//     const checksum = decimals.reduce((sum, value) => sum + parseInt(value, 16), 0) % 16
+//     return id.substring(35, 36) === checksum.toString(16)
+// }
 
 export const isUUID = (uuid:string, checksum:boolean = false) => (
     typeof uuid === 'string' &&
@@ -41,19 +71,13 @@ const addDashes = (str:string):string => {
     return `${str.substring(0, 8)}-${str.substring(8, 12)}-${str.substring(12, 16)}-${str.substring(16, 20)}-${str.substring(20)}`
 }
 
-const calcChecksum = (str:string) => {
-    const decimals = str.split('') // .map((char:string) => )
-    const checksum = decimals.reduce((sum, value) => sum + parseInt(value, 16), 0) % 16
-    return checksum.toString(16)
-}
-
-const uuid = (prefix:string = '', timestamp:boolean = true, version:boolean = true, checksum:boolean = false):string => {
+const uuid = (prefix:string = '', timestamp:boolean = true, version:number|boolean = true, checksum:boolean = false):string => {
     if (prefix) {
         validatePrefix(prefix)
         prefix = prefix.toLowerCase()
     }
     const center:string = timestamp ? new Date().getTime().toString(16) : ''
-    const suffix:string = randomBytes(32 - prefix.length - center.length - (version ? 1 : 0) - (checksum ? 1 : 0))
+    const suffix:string = randomBytes(32 - prefix.length - center.length - (version ? 1 : 0) - (checksum ? 2 : 0))
     let joined:string = prefix + center + suffix
     if (version) {
         joined = joined.substring(0, 12) + '9' + joined.substring(12)

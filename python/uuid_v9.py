@@ -5,11 +5,35 @@ import time
 uuid_regex = re.compile(r'^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$', re.IGNORECASE)
 uuidv9_regex = re.compile(r'^[0-9a-f]{8}-[0-9a-f]{4}-9[0-9a-f]{3}-[0-9a-f]{4}-[0-9a-f]{12}$', re.IGNORECASE)
 
-def verify_checksum(id):
-    clean_id = id.replace('-', '')
-    decimals = [int(char, 16) for char in clean_id[0:31]]
-    checksum = sum(decimals) % 16
-    return (format(checksum, 'x') == clean_id[31:32])
+def calc_checksum(hex_string): # CRC-8
+    data = [int(hex_string[i:i+2], 16) for i in range(0, len(hex_string), 2)]
+    polynomial = 0x07
+    crc = 0x00
+    for byte in data:
+        crc ^= byte
+        for _ in range(8):
+            if crc & 0x80:
+                crc = (crc << 1) ^ polynomial
+            else:
+                crc <<= 1
+    return format(crc & 0xFF, 'x')
+    # return format(crc & 0xF, 'x')
+
+def verify_checksum(uuid):
+    clean_uuid = uuid.replace('-', '')[0:30]
+    checksum = calc_checksum(clean_uuid)
+    return checksum == uuid[34:36]
+
+# def verify_checksum(id):
+#     clean_id = id.replace('-', '')
+#     decimals = [int(char, 16) for char in clean_id[0:31]]
+#     checksum = sum(decimals) % 16
+#     return (format(checksum, 'x') == clean_id[31:32])
+
+# def calc_checksum(string):
+#     decimals = [int(char, 16) for char in string]
+#     checksum = sum(decimals) % 16
+#     return format(checksum, 'x')
 
 def is_uuid(uuid, checksum=False):
     return isinstance(uuid, str) and uuid_regex.match(uuid) and (not checksum or verify_checksum(uuid))
@@ -36,17 +60,12 @@ def validate_prefix(prefix):
 def add_dashes(str):
     return f'{str[:8]}-{str[8:12]}-{str[12:16]}-{str[16:20]}-{str[20:]}'
 
-def calc_checksum(string):
-    decimals = [int(char, 16) for char in string]
-    checksum = sum(decimals) % 16
-    return format(checksum, 'x')
-
 def uuid(prefix='', timestamp=True, version=True, checksum=False):
     if prefix:
         validate_prefix(prefix)
         prefix = prefix.lower()
     center = hex(int(time.time_ns() / 1000000))[2:] if timestamp else ''
-    suffix = random_bytes(32 - len(prefix) - len(center) - (1 if version else 0) - (1 if checksum else 0))
+    suffix = random_bytes(32 - len(prefix) - len(center) - (1 if version else 0) - (2 if checksum else 0))
     joined = prefix + center + suffix
     if version:
         joined = joined[:12] + '9' + joined[12:]
