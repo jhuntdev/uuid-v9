@@ -6,7 +6,8 @@ const {
     uuidV1Regex,
     uuidV4Regex,
     uuidV9Regex,
-    isUUID
+    isUUID,
+    UUIDGenerator
 } = require('../dist')
 
 let sleepTimeout
@@ -15,7 +16,7 @@ const sleep = (ms) => {
     return new Promise(resolve => sleepTimeout = setTimeout(resolve, ms))
 }
 
-describe('uuid', () => {
+describe('uuid-v9', () => {
     it('should validate as a UUID', async () => {
         const id1 = uuid()
         const id2 = uuid('a1b2c3d4')
@@ -132,5 +133,59 @@ describe('uuid', () => {
         assert.strictEqual(uuidV1Regex.test(id2), true)
         assert.strictEqual(uuidV4Regex.test(id3), true)
         assert.strictEqual(uuidV4Regex.test(id4), true)
+    })
+    it('should provide a working generator utility', async () => {
+        const uuid1 = UUIDGenerator({
+            prefix: '',
+            timestamp: true,
+            checksum: true,
+            version: false,
+            compatible: false
+        })
+        const uuid2 = UUIDGenerator({
+            prefix: 'a1b2c3d4',
+            timestamp: false,
+            checksum: false,
+            version: false,
+            compatible: true
+        })
+        const uuid3 = UUIDGenerator({
+            prefix: '',
+            timestamp: true,
+            checksum: true,
+            version: false,
+            compatible: false
+        })
+        const uuid4 = UUIDGenerator({
+            prefix: 'a1b2c3d4',
+            timestamp: false,
+            checksum: true,
+            version: false,
+            compatible: true
+        })
+        const id1 = uuid1('', false)
+        const id2 = uuid2()
+        const id3 = uuid3('a1b2c3d4', false, true, false, true)
+        const id4 = uuid4('', true)
+        await sleep(2)
+        const id5 = uuid4('', true)
+        assert.strictEqual(!!id1, true)
+        assert.strictEqual(!!id2, true)
+        assert.strictEqual(!!id3, true)
+        assert.strictEqual(!!id4, true)
+        assert.notStrictEqual(id1.substring(0, 8), 'a1b2c3d4')
+        assert.strictEqual(id2.substring(0, 8), 'a1b2c3d4')
+        assert.strictEqual(id3.substring(0, 8), 'a1b2c3d4')
+        assert.notStrictEqual(id4.substring(0, 8), 'a1b2c3d4')
+        assert.notStrictEqual(id5.substring(0, 8), 'a1b2c3d4')
+        assert.strictEqual(uuidRegex.test(id1), true)
+        assert.strictEqual(uuidRegex.test(id2), true)
+        assert.strictEqual(uuidRegex.test(id3), true)
+        assert.strictEqual(uuidRegex.test(id4), true)
+        assert.strictEqual(uuidV4Regex.test(id2), true)
+        assert.strictEqual(uuidV4Regex.test(id3), true)
+        assert.strictEqual(uuidV1Regex.test(id4), true)
+        assert.strictEqual(uuidV1Regex.test(id5), true)
+        assert.strictEqual(id4 < id5, true)
     })
 })

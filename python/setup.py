@@ -8,7 +8,7 @@ setup(
     version="0.0.2",
     author="JHunt",
     author_email="hello@jhunt.dev",
-    description="The v9 UUID supports both ordered and unordered UUIDs with optional prefixes and checksums.",
+    description="The v9 UUID supports both time-based sequential and random non-sequential IDs with an optional prefix, an optional checksum, and sufficient randomness to avoid collisions.",
     long_description=readme,
     long_description_content_type="text/markdown",
     # url="https://uuid-v9.jhunt.dev",

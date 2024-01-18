@@ -3,9 +3,9 @@ export const uuidV1Regex = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-1[0-9a-fA-F]{3}-[89ab
 export const uuidV4Regex = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$/
 export const uuidV9Regex = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-9[0-9a-fA-F]{3}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/
 
-function calcChecksum(hexString: string): string { // CRC-8
-    const data: number[] = hexString.match(/.{1,2}/g)!.map(byte => parseInt(byte, 16))
-    const polynomial: number = 0x07
+function calcChecksum(hexString:string):string { // CRC-8
+    const data:number[] = hexString.match(/.{1,2}/g)!.map(byte => parseInt(byte, 16))
+    const polynomial:number = 0x07
     let crc: number = 0x00
     for (const byte of data) {
         crc ^= byte
@@ -45,12 +45,6 @@ export const isUUID = (uuid:string, checksum:boolean = false) => (
     (!checksum || verifyChecksum(uuid))
 )
 
-// export const isUUIDv9 = (uuid:string, checksum:boolean = false) => (
-//     typeof uuid === 'string' &&
-//     uuidV9Regex.test(uuid) &&
-//     (!checksum || verifyChecksum(uuid))
-// )
-
 const randomBytes = (count:number):string => {
     let str = ''
     for (let i = 0; i < count; i++) {
@@ -78,12 +72,12 @@ const addDashes = (str:string):string => {
     return `${str.substring(0, 8)}-${str.substring(8, 12)}-${str.substring(12, 16)}-${str.substring(16, 20)}-${str.substring(20)}`
 }
 
-const uuid = (prefix:string = '', timestamp:boolean = true, checksum:boolean = false, version:boolean = false, compatible:boolean = false):string => {
+const uuid = (prefix:string = '', timestamp:boolean|number = true, checksum:boolean = false, version:boolean = false, compatible:boolean = false):string => {
     if (prefix) {
         validatePrefix(prefix)
         prefix = prefix.toLowerCase()
     }
-    const center:string = timestamp ? new Date().getTime().toString(16) : ''
+    const center:string = typeof timestamp === 'number' ? timestamp.toString(16) : timestamp ? new Date().getTime().toString(16) : ''
     const suffix:string = randomBytes(32 - prefix.length - center.length - (checksum ? 2 : 0) - (compatible ? 2 : version ? 1 : 0))
     let joined:string = prefix + center + suffix
     if (checksum) {
@@ -95,6 +89,25 @@ const uuid = (prefix:string = '', timestamp:boolean = true, checksum:boolean = f
         joined = joined.substring(0, 12) + '9' + joined.substring(12)
     }
     return addDashes(joined)
+}
+
+export interface UUIDGeneratorConfig {
+    prefix?:string
+    timestamp?:boolean|number
+    checksum?:boolean
+    version?:boolean
+    compatible?:boolean
+}
+
+export const UUIDGenerator = (config:UUIDGeneratorConfig) => {
+    if (!config) throw new Error('The UUIDGenerator requires a config object')
+    return (
+        prefix:string = config.prefix || '',
+        timestamp:boolean|number = config.timestamp === false ? false : config.timestamp || true,
+        checksum:boolean = config.checksum || false,
+        version:boolean = config.version || false,
+        compatible:boolean = config.compatible || false
+    ) => uuid(prefix, timestamp, checksum, version, compatible)
 }
 
 export default uuid

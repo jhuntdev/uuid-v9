@@ -1,6 +1,6 @@
 # UUID v9
 
- The v9 UUID supports both time-based sequential and random non-sequential IDs with an optional prefix of up to 8 hexadecimal characters, an optional checksum, an optional version identifier, and sufficient randomness to avoid collisions.
+The v9 UUID supports both time-based sequential and random non-sequential IDs with an optional prefix, an optional checksum, and sufficient randomness to avoid collisions.
 
 <!-- To learn more about UUID v9, please visit the website: https://uuid-v9.jhunt.dev -->
 
@@ -20,7 +20,7 @@ yarn add uuid-v9
 ## Usage
 
 ```javascript
-import uuid, { isUUID, isUUIDv9 } from 'uuid-v9' 
+import uuid, { isUUID, UUIDGenerator } from 'uuid-v9' 
 
 const orderedId = uuid()
 const prefixedOrderedId = uuid('a1b2c3d4') // up to 8 hexadecimal characters
@@ -31,6 +31,17 @@ const orderedIdWithVersion = uuid('', true, false, true)
 const orderedIdWithBackwardsCompatibility = uuid('', true, false, false, true)
 
 const isValid = isUUID(orderedId) // built-in UUID validator
+
+const makeMyId = UUIDGenerator({
+    prefix: '',
+    timestamp: true,
+    checksum: true,
+    version: false,
+    compatible: true
+})
+
+const myId = makeMyId() // uses defaults specified in createUUIDGenerator
+const myIdCustom = makeMyId('a1b2c3d4', false) // overrides defaults
 ```
 
 ## Compatibility
@@ -41,7 +52,7 @@ Some UUID validators will not accept some v9 UUIDs. Three possible workarounds a
 2) Use compatibility mode*
 3) Bypass the validator (not recommended)
 
-*Compatibility mode adds version and variant digits to immitate v1 or v4 UUIDs based on whether or not you have a timestamp.
+_*Compatibility mode adds version and variant digits to immitate v1 or v4 UUIDs based on whether or not you have a timestamp._
 
 ## Format
 

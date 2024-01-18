@@ -1,6 +1,6 @@
 # UUID v9
 
- The v9 UUID supports both time-based sequential and random non-sequential IDs with an optional prefix of up to 8 hexadecimal characters, an optional checksum, an optional version identifier, and sufficient randomness to avoid collisions.
+The v9 UUID supports both time-based sequential and random non-sequential IDs with an optional prefix, an optional checksum, and sufficient randomness to avoid collisions.
 
 <!-- To learn more about UUID v9, please visit the website: https://uuid-v9.jhunt.dev -->
 

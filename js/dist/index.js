@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.isUUID = exports.verifyChecksum = exports.uuidV9Regex = exports.uuidV4Regex = exports.uuidV1Regex = exports.uuidRegex = void 0;
+exports.UUIDGenerator = exports.isUUID = exports.verifyChecksum = exports.uuidV9Regex = exports.uuidV4Regex = exports.uuidV1Regex = exports.uuidRegex = void 0;
 exports.uuidRegex = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/;
 exports.uuidV1Regex = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-1[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$/;
 exports.uuidV4Regex = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$/;
@@ -43,11 +43,6 @@ const isUUID = (uuid, checksum = false) => (typeof uuid === 'string' &&
     exports.uuidRegex.test(uuid) &&
     (!checksum || (0, exports.verifyChecksum)(uuid)));
 exports.isUUID = isUUID;
-// export const isUUIDv9 = (uuid:string, checksum:boolean = false) => (
-//     typeof uuid === 'string' &&
-//     uuidV9Regex.test(uuid) &&
-//     (!checksum || verifyChecksum(uuid))
-// )
 const randomBytes = (count) => {
     let str = '';
     for (let i = 0; i < count; i++) {
@@ -78,7 +73,7 @@ const uuid = (prefix = '', timestamp = true, checksum = false, version = false, 
         validatePrefix(prefix);
         prefix = prefix.toLowerCase();
     }
-    const center = timestamp ? new Date().getTime().toString(16) : '';
+    const center = typeof timestamp === 'number' ? timestamp.toString(16) : timestamp ? new Date().getTime().toString(16) : '';
     const suffix = randomBytes(32 - prefix.length - center.length - (checksum ? 2 : 0) - (compatible ? 2 : version ? 1 : 0));
     let joined = prefix + center + suffix;
     if (checksum) {
@@ -92,4 +87,10 @@ const uuid = (prefix = '', timestamp = true, checksum = false, version = false, 
     }
     return addDashes(joined);
 };
+const UUIDGenerator = (config) => {
+    if (!config)
+        throw new Error('The UUIDGenerator requires a config object');
+    return (prefix = config.prefix || '', timestamp = config.timestamp === false ? false : config.timestamp || true, checksum = config.checksum || false, version = config.version || false, compatible = config.compatible || false) => uuid(prefix, timestamp, checksum, version, compatible);
+};
+exports.UUIDGenerator = UUIDGenerator;
 exports.default = uuid;
