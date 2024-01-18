@@ -1,13 +1,13 @@
 {
   "name": "uuid-v9",
-  "version": "0.0.8",
-  "description": "An ultra-fast, lightweight, zero-dependency JavaScript/TypeScript implementation of the UUID v9 proposal.",
+  "version": "0.1.0",
+  "description": "The v9 UUID supports both ordered and unordered UUIDs with optional prefixes and checksums.",
   "keywords": [
     "uuid",
     "uuidv9",
     "v9",
     "prefix",
-    "version",
+    "timestamp",
     "checksum",
     "crc",
     "javascript",

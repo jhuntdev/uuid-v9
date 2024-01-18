@@ -1,5 +1,7 @@
-export const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
-export const uuidV9Regex = /^[0-9a-f]{8}-[0-9a-f]{4}-9[0-9a-f]{3}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+export const uuidRegex = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/
+export const uuidV1Regex = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-1[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$/
+export const uuidV4Regex = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$/
+export const uuidV9Regex = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-9[0-9a-fA-F]{3}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/
 
 function calcChecksum(hexString: string): string { // CRC-8
     const data: number[] = hexString.match(/.{1,2}/g)!.map(byte => parseInt(byte, 16))
@@ -15,7 +17,7 @@ function calcChecksum(hexString: string): string { // CRC-8
             }
         }
     }
-    return (crc & 0xFF).toString(16)
+    return (crc & 0xFF).toString(16).padStart(2, '0')
     // return (crc & 0xF).toString(16)
 }
 
@@ -43,11 +45,11 @@ export const isUUID = (uuid:string, checksum:boolean = false) => (
     (!checksum || verifyChecksum(uuid))
 )
 
-export const isUUIDv9 = (uuid:string, checksum:boolean = false) => (
-    typeof uuid === 'string' &&
-    uuidV9Regex.test(uuid) &&
-    (!checksum || verifyChecksum(uuid))
-)
+// export const isUUIDv9 = (uuid:string, checksum:boolean = false) => (
+//     typeof uuid === 'string' &&
+//     uuidV9Regex.test(uuid) &&
+//     (!checksum || verifyChecksum(uuid))
+// )
 
 const randomBytes = (count:number):string => {
     let str = ''
@@ -56,6 +58,11 @@ const randomBytes = (count:number):string => {
         str += r.toString(16)
     }
     return str
+}
+
+const randomChar = (chars:string):string => {
+    const randomIndex = Math.floor(Math.random() * chars.length)
+    return chars.charAt(randomIndex)
 }
 
 const base16Regex = /^[0-9a-fA-F]+$/
@@ -71,19 +78,21 @@ const addDashes = (str:string):string => {
     return `${str.substring(0, 8)}-${str.substring(8, 12)}-${str.substring(12, 16)}-${str.substring(16, 20)}-${str.substring(20)}`
 }
 
-const uuid = (prefix:string = '', timestamp:boolean = true, version:number|boolean = true, checksum:boolean = false):string => {
+const uuid = (prefix:string = '', timestamp:boolean = true, checksum:boolean = false, version:boolean = false, compatible:boolean = false):string => {
     if (prefix) {
         validatePrefix(prefix)
         prefix = prefix.toLowerCase()
     }
     const center:string = timestamp ? new Date().getTime().toString(16) : ''
-    const suffix:string = randomBytes(32 - prefix.length - center.length - (version ? 1 : 0) - (checksum ? 2 : 0))
+    const suffix:string = randomBytes(32 - prefix.length - center.length - (checksum ? 2 : 0) - (compatible ? 2 : version ? 1 : 0))
     let joined:string = prefix + center + suffix
-    if (version) {
-        joined = joined.substring(0, 12) + '9' + joined.substring(12)
-    }
     if (checksum) {
         joined += calcChecksum(joined)
+    }
+    if (compatible) {
+        joined = joined.substring(0, 12) + (timestamp ? '1' : '4') + joined.substring(12, 15) + randomChar('89ab') + joined.substring(15)
+    } else if (version) {
+        joined = joined.substring(0, 12) + '9' + joined.substring(12)
     }
     return addDashes(joined)
 }

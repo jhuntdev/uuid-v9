@@ -8,7 +8,7 @@ setup(
     version="0.0.2",
     author="JHunt",
     author_email="hello@jhunt.dev",
-    description="An ultra-fast, lightweight, zero-dependency Python implementation of the UUID v9 proposal.",
+    description="The v9 UUID supports both ordered and unordered UUIDs with optional prefixes and checksums.",
     long_description=readme,
     long_description_content_type="text/markdown",
     # url="https://uuid-v9.jhunt.dev",

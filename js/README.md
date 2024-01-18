@@ -1,6 +1,6 @@
 # UUID v9
 
-An ultra-fast, lightweight, zero-dependency JavaScript/TypeScript implementation of the UUID v9 proposal. The proposed UUID v9 format allows generating both time-based sequential and random non-sequential IDs with an optional prefix of up to 8 hexadecimal characters, an optional version identifier, an optional checksum, and sufficient randomness to avoid collisions. 
+ The v9 UUID supports both time-based sequential and random non-sequential IDs with an optional prefix of up to 8 hexadecimal characters, an optional checksum, an optional version identifier, and sufficient randomness to avoid collisions.
 
 <!-- To learn more about UUID v9, please visit the website: https://uuid-v9.jhunt.dev -->
 
@@ -26,24 +26,28 @@ const orderedId = uuid()
 const prefixedOrderedId = uuid('a1b2c3d4') // up to 8 hexadecimal characters
 const unorderedId = uuid('', false)
 const prefixedUnorderedId = uuid('a1b2c3d4', false)
-const orderedIdWithoutVersion = uuid('', true, false, true)
-const orderedIdWithChecksum = uuid('', true, true, true)
+const orderedIdWithChecksum = uuid('', true, true)
+const orderedIdWithVersion = uuid('', true, false, true)
+const orderedIdWithBackwardsCompatibility = uuid('', true, false, false, true)
 
-const isValidV9 = isUUIDv9(orderedId) // UUID v9 validator
-const isValid = isUUID(orderedIdWithoutVersion) // generic UUID validator
+const isValid = isUUID(orderedId) // built-in UUID validator
 ```
 
-## Note
+## Compatibility
 
-Some UUID validators will not recognize v9 as a valid UUID even though it is. Three possible solutions are:
+Some UUID validators will not accept some v9 UUIDs. Three possible workarounds are:
 
-1) Use the included validator (recommended)
-2) Bypass the validator (not recommended)
-3) Substitute the version digit for an earlier version that will pass (not recommended)
+1) Use the built-in validator (recommended)
+2) Use compatibility mode*
+3) Bypass the validator (not recommended)
 
-Here is the UUID v9 format: `xxxxxxxx-xxxx-9xxx-xxxx-xxxxxxxxxxyy`
+*Compatibility mode adds version and variant digits to immitate v1 or v4 UUIDs based on whether or not you have a timestamp.
 
-x = prefix/timestamp/random, 9 = version (optional), y = checksum (optional)
+## Format
+
+Here is the UUID v9 format: `xxxxxxxx-xxxx-9xxx-8xxx-xxxxxxxxxxyy`
+
+x = prefix/timestamp/random, y = checksum (optional), 9 = version (optional), 8 = variant (compatibility mode)
 
 ## License
 

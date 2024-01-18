@@ -1,8 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.isUUIDv9 = exports.isUUID = exports.verifyChecksum = exports.uuidV9Regex = exports.uuidRegex = void 0;
-exports.uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-exports.uuidV9Regex = /^[0-9a-f]{8}-[0-9a-f]{4}-9[0-9a-f]{3}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+exports.isUUID = exports.verifyChecksum = exports.uuidV9Regex = exports.uuidV4Regex = exports.uuidV1Regex = exports.uuidRegex = void 0;
+exports.uuidRegex = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/;
+exports.uuidV1Regex = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-1[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$/;
+exports.uuidV4Regex = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$/;
+exports.uuidV9Regex = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-9[0-9a-fA-F]{3}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/;
 function calcChecksum(hexString) {
     const data = hexString.match(/.{1,2}/g).map(byte => parseInt(byte, 16));
     const polynomial = 0x07;
@@ -18,7 +20,7 @@ function calcChecksum(hexString) {
             }
         }
     }
-    return (crc & 0xFF).toString(16);
+    return (crc & 0xFF).toString(16).padStart(2, '0');
     // return (crc & 0xF).toString(16)
 }
 const verifyChecksum = (uuid) => {
@@ -41,10 +43,11 @@ const isUUID = (uuid, checksum = false) => (typeof uuid === 'string' &&
     exports.uuidRegex.test(uuid) &&
     (!checksum || (0, exports.verifyChecksum)(uuid)));
 exports.isUUID = isUUID;
-const isUUIDv9 = (uuid, checksum = false) => (typeof uuid === 'string' &&
-    exports.uuidV9Regex.test(uuid) &&
-    (!checksum || (0, exports.verifyChecksum)(uuid)));
-exports.isUUIDv9 = isUUIDv9;
+// export const isUUIDv9 = (uuid:string, checksum:boolean = false) => (
+//     typeof uuid === 'string' &&
+//     uuidV9Regex.test(uuid) &&
+//     (!checksum || verifyChecksum(uuid))
+// )
 const randomBytes = (count) => {
     let str = '';
     for (let i = 0; i < count; i++) {
@@ -52,6 +55,10 @@ const randomBytes = (count) => {
         str += r.toString(16);
     }
     return str;
+};
+const randomChar = (chars) => {
+    const randomIndex = Math.floor(Math.random() * chars.length);
+    return chars.charAt(randomIndex);
 };
 const base16Regex = /^[0-9a-fA-F]+$/;
 const isBase16 = (str) => base16Regex.test(str);
@@ -66,19 +73,22 @@ const validatePrefix = (prefix) => {
 const addDashes = (str) => {
     return `${str.substring(0, 8)}-${str.substring(8, 12)}-${str.substring(12, 16)}-${str.substring(16, 20)}-${str.substring(20)}`;
 };
-const uuid = (prefix = '', timestamp = true, version = true, checksum = false) => {
+const uuid = (prefix = '', timestamp = true, checksum = false, version = false, compatible = false) => {
     if (prefix) {
         validatePrefix(prefix);
         prefix = prefix.toLowerCase();
     }
     const center = timestamp ? new Date().getTime().toString(16) : '';
-    const suffix = randomBytes(32 - prefix.length - center.length - (version ? 1 : 0) - (checksum ? 2 : 0));
+    const suffix = randomBytes(32 - prefix.length - center.length - (checksum ? 2 : 0) - (compatible ? 2 : version ? 1 : 0));
     let joined = prefix + center + suffix;
-    if (version) {
-        joined = joined.substring(0, 12) + '9' + joined.substring(12);
-    }
     if (checksum) {
         joined += calcChecksum(joined);
+    }
+    if (compatible) {
+        joined = joined.substring(0, 12) + (timestamp ? '1' : '4') + joined.substring(12, 15) + randomChar('89ab') + joined.substring(15);
+    }
+    else if (version) {
+        joined = joined.substring(0, 12) + '9' + joined.substring(12);
     }
     return addDashes(joined);
 };
