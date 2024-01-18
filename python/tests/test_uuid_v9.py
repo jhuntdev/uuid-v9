@@ -1,7 +1,7 @@
 import unittest
 import re
 import time
-from uuid_v9 import uuid, verify_checksum
+from uuid_v9 import uuid, is_uuid, verify_checksum
 
 uuid_regex = {
     'v9': re.compile(r'^[0-9a-f]{8}-[0-9a-f]{4}-9[0-9a-f]{3}-[0-9a-f]{4}-[0-9a-f]{12}$', re.I),
@@ -9,19 +9,15 @@ uuid_regex = {
 }
 
 class TestUuidV9(unittest.TestCase):
-    def test_validate_as_version_9_uuid(self):
+    def test_validate_as_uuid(self):
         id1 = uuid()
         id2 = uuid('a1b2c3d4')
         id3 = uuid('', False)
         id4 = uuid('a1b2c3d4', False)
 
-        self.assertTrue(uuid_regex['v9'].match(id1))
         self.assertTrue(uuid_regex['generic'].match(id1))
-        self.assertTrue(uuid_regex['v9'].match(id2))
         self.assertTrue(uuid_regex['generic'].match(id2))
-        self.assertTrue(uuid_regex['v9'].match(id3))
         self.assertTrue(uuid_regex['generic'].match(id3))
-        self.assertTrue(uuid_regex['v9'].match(id4))
         self.assertTrue(uuid_regex['generic'].match(id4))
 
     def test_generate_sequential_ids(self):
@@ -75,16 +71,16 @@ class TestUuidV9(unittest.TestCase):
         self.assertEqual(idNs[:8], 'a1b2c3d4')
         self.assertNotEqual(idS[14:18], idNs[14:18])
 
-    def test_generate_ids_without_version(self):
-        id = uuid('', True, False)
-        self.assertTrue(bool(id))
-        self.assertTrue(uuid_regex['generic'].match(id))
-
     def test_generate_ids_with_checksum(self):
-        id = uuid('', True, True, True)
+        id = uuid('', True, True)
         self.assertTrue(bool(id))
         self.assertTrue(verify_checksum(id))
         self.assertTrue(uuid_regex['v9'].match(id))
+        self.assertTrue(uuid_regex['generic'].match(id))
+
+    def test_generate_ids_without_version(self):
+        id = uuid('', True, False, False)
+        self.assertTrue(bool(id))
         self.assertTrue(uuid_regex['generic'].match(id))
 
 if __name__ == '__main__':

@@ -80,13 +80,13 @@ const uuid = (prefix:string = '', timestamp:boolean|number = true, checksum:bool
     const center:string = typeof timestamp === 'number' ? timestamp.toString(16) : timestamp ? new Date().getTime().toString(16) : ''
     const suffix:string = randomBytes(32 - prefix.length - center.length - (checksum ? 2 : 0) - (compatible ? 2 : version ? 1 : 0))
     let joined:string = prefix + center + suffix
-    if (checksum) {
-        joined += calcChecksum(joined)
-    }
     if (compatible) {
         joined = joined.substring(0, 12) + (timestamp ? '1' : '4') + joined.substring(12, 15) + randomChar('89ab') + joined.substring(15)
     } else if (version) {
         joined = joined.substring(0, 12) + '9' + joined.substring(12)
+    }
+    if (checksum) {
+        joined += calcChecksum(joined)
     }
     return addDashes(joined)
 }

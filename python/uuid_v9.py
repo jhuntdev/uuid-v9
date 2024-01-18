@@ -44,6 +44,10 @@ def is_uuidv9(uuid, checksum=False):
 def random_bytes(count):
     return ''.join(random.choice('0123456789abcdef') for _ in range(count))
 
+def random_char(chars):
+    random_index = random.randint(0, len(chars) - 1)
+    return chars[random_index]
+
 base16_regex = re.compile(r'^[0-9a-fA-F]+$')
 
 def is_base16(str):
@@ -60,14 +64,18 @@ def validate_prefix(prefix):
 def add_dashes(str):
     return f'{str[:8]}-{str[8:12]}-{str[12:16]}-{str[16:20]}-{str[20:]}'
 
-def uuid(prefix='', timestamp=True, version=True, checksum=False):
+def uuid(prefix='', timestamp=True, checksum=False, version=True, compatible=False):
     if prefix:
         validate_prefix(prefix)
         prefix = prefix.lower()
-    center = hex(int(time.time_ns() / 1000000))[2:] if timestamp else ''
+    # center = hex(int(time.time_ns() / 1000000))[2:] if timestamp else ''
+    # print('regular time' if timestamp is True else 'custom time' if isinstance(timestamp, int) else 'no time')
+    center = format(int(time.time_ns() / 1000000), 'x') if timestamp is True else format(timestamp, 'x') if isinstance(timestamp, int) else ''
     suffix = random_bytes(32 - len(prefix) - len(center) - (1 if version else 0) - (2 if checksum else 0))
     joined = prefix + center + suffix
-    if version:
+    if compatible:
+        joined = joined[:12] + ('1' if timestamp else '4') + joined[12:15] + random_char('89ab') + joined[15]
+    elif version:
         joined = joined[:12] + '9' + joined[12:]
     if checksum:
         joined += calc_checksum(joined)
@@ -77,8 +85,10 @@ if __name__ == "__main__":
     import argparse
     parser = argparse.ArgumentParser(description="Generate a UUID v9.")
     parser.add_argument("--prefix", dest="prefix", default="", help="Include a prefix (default: '')")
-    parser.add_argument("--unordered", dest="timestamp", action="store_false", help="Exclude timestamp (default: True)")
-    parser.add_argument("--noversion", dest="version", action="store_false", help="Exclude version (default: True)")
-    parser.add_argument("--checksum", dest="checksum", action="store_true", help="Include checksum (default: False)")
+    parser.add_argument("--timestamp", dest="timestamp", help="Customize the timestamp")
+    parser.add_argument("--unordered", dest="unordered", action="store_true", help="Exclude timestamp")
+    parser.add_argument("--checksum", dest="checksum", action="store_true", help="Include checksum")
+    parser.add_argument("--version", dest="version", action="store_true", help="Include version")
+    parser.add_argument("--compatible", dest="compatible", action="store_true", help="Enable compatibility mode")
     args = parser.parse_args()
-    print(uuid(args.prefix, args.timestamp, args.version, args.checksum))
+    print(uuid(args.prefix, int(args.timestamp) if args.timestamp else not args.unordered, args.checksum, args.version, args.compatible))

@@ -1,6 +1,6 @@
 {
   "name": "uuid-v9",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "The v9 UUID supports both time-based sequential and random non-sequential IDs with an optional prefix, an optional checksum, and sufficient randomness to avoid collisions.",
   "keywords": [
     "uuid",
