@@ -71,10 +71,10 @@ def uuid(prefix='', timestamp=True, checksum=False, version=True, compatible=Fal
     # center = hex(int(time.time_ns() / 1000000))[2:] if timestamp else ''
     # print('regular time' if timestamp is True else 'custom time' if isinstance(timestamp, int) else 'no time')
     center = format(int(time.time_ns() / 1000000), 'x') if timestamp is True else format(timestamp, 'x') if isinstance(timestamp, int) else ''
-    suffix = random_bytes(32 - len(prefix) - len(center) - (1 if version else 0) - (2 if checksum else 0))
+    suffix = random_bytes(32 - len(prefix) - len(center) - (2 if checksum else 0) - (2 if compatible else 1 if version else 0))
     joined = prefix + center + suffix
     if compatible:
-        joined = joined[:12] + ('1' if timestamp else '4') + joined[12:15] + random_char('89ab') + joined[15]
+        joined = joined[:12] + ('1' if timestamp else '4') + joined[12:15] + random_char('89ab') + joined[15:]
     elif version:
         joined = joined[:12] + '9' + joined[12:]
     if checksum:

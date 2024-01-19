@@ -3,10 +3,10 @@ import re
 import time
 from uuid_v9 import uuid, is_uuid, verify_checksum
 
-uuid_regex = {
-    'v9': re.compile(r'^[0-9a-f]{8}-[0-9a-f]{4}-9[0-9a-f]{3}-[0-9a-f]{4}-[0-9a-f]{12}$', re.I),
-    'generic': re.compile(r'^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$', re.I)
-}
+uuid_regex = re.compile(r'^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$', re.I)
+uuid_v1_regex = re.compile(r'^[0-9a-f]{8}-[0-9a-f]{4}-1[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$', re.I)
+uuid_v4_regex = re.compile(r'^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$', re.I)
+uuid_v9_regex = re.compile(r'^[0-9a-f]{8}-[0-9a-f]{4}-9[0-9a-f]{3}-[0-9a-f]{4}-[0-9a-f]{12}$', re.I)
 
 class TestUuidV9(unittest.TestCase):
     def test_validate_as_uuid(self):
@@ -15,10 +15,10 @@ class TestUuidV9(unittest.TestCase):
         id3 = uuid('', False)
         id4 = uuid('a1b2c3d4', False)
 
-        self.assertTrue(uuid_regex['generic'].match(id1))
-        self.assertTrue(uuid_regex['generic'].match(id2))
-        self.assertTrue(uuid_regex['generic'].match(id3))
-        self.assertTrue(uuid_regex['generic'].match(id4))
+        self.assertTrue(uuid_regex.match(id1))
+        self.assertTrue(uuid_regex.match(id2))
+        self.assertTrue(uuid_regex.match(id3))
+        self.assertTrue(uuid_regex.match(id4))
 
     def test_generate_sequential_ids(self):
         id1 = uuid()
@@ -75,13 +75,26 @@ class TestUuidV9(unittest.TestCase):
         id = uuid('', True, True)
         self.assertTrue(bool(id))
         self.assertTrue(verify_checksum(id))
-        self.assertTrue(uuid_regex['v9'].match(id))
-        self.assertTrue(uuid_regex['generic'].match(id))
+        self.assertTrue(uuid_regex.match(id))
 
-    def test_generate_ids_without_version(self):
-        id = uuid('', True, False, False)
+    def test_generate_ids_with_version(self):
+        id = uuid('', True, False, True)
         self.assertTrue(bool(id))
-        self.assertTrue(uuid_regex['generic'].match(id))
+        self.assertTrue(uuid_v9_regex.match(id))
+
+    def test_generate_ids_with_compatibility(self):
+        id1 = uuid('', True, False, False, True)
+        id2 = uuid('a1b2c3d4', True, False, False, True)
+        id3 = uuid('', False, False, False, True)
+        id4 = uuid('a1b2c3d4', False, False, False, True)
+        self.assertTrue(bool(id1))
+        self.assertTrue(bool(id2))
+        self.assertTrue(bool(id3))
+        self.assertTrue(bool(id4))
+        self.assertTrue(uuid_v1_regex.match(id1))
+        self.assertTrue(uuid_v1_regex.match(id2))
+        self.assertTrue(uuid_v4_regex.match(id3))
+        self.assertTrue(uuid_v4_regex.match(id4))
 
 if __name__ == '__main__':
     unittest.main()

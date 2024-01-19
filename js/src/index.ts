@@ -18,7 +18,6 @@ function calcChecksum(hexString:string):string { // CRC-8
         }
     }
     return (crc & 0xFF).toString(16).padStart(2, '0')
-    // return (crc & 0xF).toString(16)
 }
 
 export const verifyChecksum = (uuid:string) => {
@@ -26,18 +25,6 @@ export const verifyChecksum = (uuid:string) => {
     const crc = calcChecksum(base16String)
     return crc === uuid.substring(34, 36)
 }
-
-// const calcChecksum = (str:string) => {
-//     const decimals = str.split('') // .map((char:string) => )
-//     const checksum = decimals.reduce((sum, value) => sum + parseInt(value, 16), 0) % 16
-//     return checksum.toString(16)
-// }
-
-// export const verifyChecksum = (id:string):boolean => {
-//     const decimals = id.replace(/-/g, '').substring(0, 31).split('')
-//     const checksum = decimals.reduce((sum, value) => sum + parseInt(value, 16), 0) % 16
-//     return id.substring(35, 36) === checksum.toString(16)
-// }
 
 export const isUUID = (uuid:string, checksum:boolean = false) => (
     typeof uuid === 'string' &&
