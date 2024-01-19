@@ -3,7 +3,6 @@ import random
 import time
 
 uuid_regex = re.compile(r'^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$', re.IGNORECASE)
-uuidv9_regex = re.compile(r'^[0-9a-f]{8}-[0-9a-f]{4}-9[0-9a-f]{3}-[0-9a-f]{4}-[0-9a-f]{12}$', re.IGNORECASE)
 
 def calc_checksum(hex_string): # CRC-8
     data = [int(hex_string[i:i+2], 16) for i in range(0, len(hex_string), 2)]
@@ -17,29 +16,20 @@ def calc_checksum(hex_string): # CRC-8
             else:
                 crc <<= 1
     return format(crc & 0xFF, 'x')
-    # return format(crc & 0xF, 'x')
 
 def verify_checksum(uuid):
     clean_uuid = uuid.replace('-', '')[0:30]
     checksum = calc_checksum(clean_uuid)
     return checksum == uuid[34:36]
 
-# def verify_checksum(id):
-#     clean_id = id.replace('-', '')
-#     decimals = [int(char, 16) for char in clean_id[0:31]]
-#     checksum = sum(decimals) % 16
-#     return (format(checksum, 'x') == clean_id[31:32])
-
-# def calc_checksum(string):
-#     decimals = [int(char, 16) for char in string]
-#     checksum = sum(decimals) % 16
-#     return format(checksum, 'x')
-
-def is_uuid(uuid, checksum=False):
-    return isinstance(uuid, str) and uuid_regex.match(uuid) and (not checksum or verify_checksum(uuid))
-
-def is_uuidv9(uuid, checksum=False):
-    return isinstance(uuid, str) and uuidv9_regex.match(uuid) and (not checksum or verify_checksum(uuid))
+def validate_uuid(uuid, checksum=False, version=False):
+    return (isinstance(uuid, str) 
+            and uuid_regex.match(uuid)
+            and (not checksum or verify_checksum(uuid))
+            and (not version or (version is True and uuid[14:15] == '9') or (
+                uuid[14:15] == str(version)
+                and ('14'.find(str(version)) == -1 or '89abAB'.find(uuid[19:20]) > -1)
+            ))
 
 def random_bytes(count):
     return ''.join(random.choice('0123456789abcdef') for _ in range(count))
@@ -68,8 +58,6 @@ def uuid(prefix='', timestamp=True, checksum=False, version=True, compatible=Fal
     if prefix:
         validate_prefix(prefix)
         prefix = prefix.lower()
-    # center = hex(int(time.time_ns() / 1000000))[2:] if timestamp else ''
-    # print('regular time' if timestamp is True else 'custom time' if isinstance(timestamp, int) else 'no time')
     center = format(int(time.time_ns() / 1000000), 'x') if timestamp is True else format(timestamp, 'x') if isinstance(timestamp, int) else ''
     suffix = random_bytes(32 - len(prefix) - len(center) - (2 if checksum else 0) - (2 if compatible else 1 if version else 0))
     joined = prefix + center + suffix
@@ -83,12 +71,12 @@ def uuid(prefix='', timestamp=True, checksum=False, version=True, compatible=Fal
 
 if __name__ == "__main__":
     import argparse
-    parser = argparse.ArgumentParser(description="Generate a UUID v9.")
+    parser = argparse.ArgumentParser(description="Generate and validate UUID v9.")
     parser.add_argument("--prefix", dest="prefix", default="", help="Include a prefix (default: '')")
     parser.add_argument("--timestamp", dest="timestamp", help="Customize the timestamp")
     parser.add_argument("--unordered", dest="unordered", action="store_true", help="Exclude timestamp")
     parser.add_argument("--checksum", dest="checksum", action="store_true", help="Include checksum")
     parser.add_argument("--version", dest="version", action="store_true", help="Include version")
-    parser.add_argument("--compatible", dest="compatible", action="store_true", help="Enable compatibility mode")
+    parser.add_argument("--backcompat", dest="backcompat", action="store_true", help="Enable compatibility mode")
     args = parser.parse_args()
-    print(uuid(args.prefix, int(args.timestamp) if args.timestamp else not args.unordered, args.checksum, args.version, args.compatible))
+    print(uuid(args.prefix, int(args.timestamp) if args.timestamp else not args.unordered, args.checksum, args.version, args.backcompat))

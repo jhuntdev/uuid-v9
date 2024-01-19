@@ -20,7 +20,7 @@ yarn add uuid-v9
 ## Usage
 
 ```javascript
-import uuid, { isUUID, UUIDGenerator } from 'uuid-v9' 
+import uuid, { validateUUID, UUIDGenerator } from 'uuid-v9' 
 
 const orderedId = uuid()
 const prefixedOrderedId = uuid('a1b2c3d4') // up to 8 hexadecimal characters
@@ -28,9 +28,12 @@ const unorderedId = uuid('', false)
 const prefixedUnorderedId = uuid('a1b2c3d4', false)
 const orderedIdWithChecksum = uuid('', true, true)
 const orderedIdWithVersion = uuid('', true, false, true)
-const orderedIdWithBackwardsCompatibility = uuid('', true, false, false, true)
+const orderedIdWithCompatibility = uuid('', true, false, false, true)
 
-const isValid = isUUID(orderedId) // built-in UUID validator
+const isValid = validateUUID(orderedId) // built-in UUID validator
+const isValidWithChecksum = validate_uuid(orderedIdWithChecksum, true)
+const isValidWithVersion = validate_uuid(orderedIdWithVersion, true, true)
+const isValidWithCompatibility = validate_uuid(orderedIdWithCompatibility, true, '1')
 
 const makeMyId = UUIDGenerator({
     prefix: '',

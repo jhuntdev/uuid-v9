@@ -1,10 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.UUIDGenerator = exports.isUUID = exports.verifyChecksum = exports.uuidV9Regex = exports.uuidV4Regex = exports.uuidV1Regex = exports.uuidRegex = void 0;
-exports.uuidRegex = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/;
-exports.uuidV1Regex = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-1[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$/;
-exports.uuidV4Regex = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$/;
-exports.uuidV9Regex = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-9[0-9a-fA-F]{3}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/;
+exports.UUIDGenerator = exports.validateUUID = exports.verifyChecksum = void 0;
+const uuidRegex = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/;
 function calcChecksum(hexString) {
     const data = hexString.match(/.{1,2}/g).map(byte => parseInt(byte, 16));
     const polynomial = 0x07;
@@ -21,7 +18,6 @@ function calcChecksum(hexString) {
         }
     }
     return (crc & 0xFF).toString(16).padStart(2, '0');
-    // return (crc & 0xF).toString(16)
 }
 const verifyChecksum = (uuid) => {
     const base16String = uuid.replace(/-/g, '').substring(0, 30);
@@ -29,20 +25,14 @@ const verifyChecksum = (uuid) => {
     return crc === uuid.substring(34, 36);
 };
 exports.verifyChecksum = verifyChecksum;
-// const calcChecksum = (str:string) => {
-//     const decimals = str.split('') // .map((char:string) => )
-//     const checksum = decimals.reduce((sum, value) => sum + parseInt(value, 16), 0) % 16
-//     return checksum.toString(16)
-// }
-// export const verifyChecksum = (id:string):boolean => {
-//     const decimals = id.replace(/-/g, '').substring(0, 31).split('')
-//     const checksum = decimals.reduce((sum, value) => sum + parseInt(value, 16), 0) % 16
-//     return id.substring(35, 36) === checksum.toString(16)
-// }
-const isUUID = (uuid, checksum = false) => (typeof uuid === 'string' &&
-    exports.uuidRegex.test(uuid) &&
-    (!checksum || (0, exports.verifyChecksum)(uuid)));
-exports.isUUID = isUUID;
+const validateUUID = (uuid, checksum = false, version = false) => (typeof uuid === 'string' &&
+    uuidRegex.test(uuid) &&
+    (!checksum || (0, exports.verifyChecksum)(uuid)) &&
+    (!version ||
+        (version === true && uuid.slice(14, 15) === '9') ||
+        (uuid.slice(14, 15) === String(version) &&
+            ('14'.indexOf(String(version)) === -1 || '89abAB'.indexOf(uuid.slice(19, 20)) > -1))));
+exports.validateUUID = validateUUID;
 const randomBytes = (count) => {
     let str = '';
     for (let i = 0; i < count; i++) {
@@ -76,14 +66,14 @@ const uuid = (prefix = '', timestamp = true, checksum = false, version = false, 
     const center = typeof timestamp === 'number' ? timestamp.toString(16) : timestamp ? new Date().getTime().toString(16) : '';
     const suffix = randomBytes(32 - prefix.length - center.length - (checksum ? 2 : 0) - (compatible ? 2 : version ? 1 : 0));
     let joined = prefix + center + suffix;
-    if (checksum) {
-        joined += calcChecksum(joined);
-    }
     if (compatible) {
         joined = joined.substring(0, 12) + (timestamp ? '1' : '4') + joined.substring(12, 15) + randomChar('89ab') + joined.substring(15);
     }
     else if (version) {
         joined = joined.substring(0, 12) + '9' + joined.substring(12);
+    }
+    if (checksum) {
+        joined += calcChecksum(joined);
     }
     return addDashes(joined);
 };

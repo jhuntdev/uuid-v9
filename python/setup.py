@@ -5,7 +5,7 @@ with open("README.md", encoding="utf-8") as readme_file:
 
 setup(
     name="uuid-v9",
-    version="0.0.3",
+    version="0.0.4",
     author="JHunt",
     author_email="hello@jhunt.dev",
     description="The v9 UUID supports both time-based sequential and random non-sequential IDs with an optional prefix, an optional checksum, and sufficient randomness to avoid collisions.",

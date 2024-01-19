@@ -1,7 +1,4 @@
-export const uuidRegex = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/
-export const uuidV1Regex = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-1[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$/
-export const uuidV4Regex = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$/
-export const uuidV9Regex = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-9[0-9a-fA-F]{3}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/
+const uuidRegex = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/
 
 function calcChecksum(hexString:string):string { // CRC-8
     const data:number[] = hexString.match(/.{1,2}/g)!.map(byte => parseInt(byte, 16))
@@ -26,10 +23,16 @@ export const verifyChecksum = (uuid:string) => {
     return crc === uuid.substring(34, 36)
 }
 
-export const isUUID = (uuid:string, checksum:boolean = false) => (
+export const validateUUID = (uuid:string, checksum:boolean = false, version:boolean|number = false) => (
     typeof uuid === 'string' &&
     uuidRegex.test(uuid) &&
-    (!checksum || verifyChecksum(uuid))
+    (!checksum || verifyChecksum(uuid)) &&
+    (!version ||
+        (version === true && uuid.slice(14, 15) === '9') ||
+        (uuid.slice(14, 15) === String(version) &&
+            ('14'.indexOf(String(version)) === -1 || '89abAB'.indexOf(uuid.slice(19, 20)) > -1)
+        )
+    )
 )
 
 const randomBytes = (count:number):string => {

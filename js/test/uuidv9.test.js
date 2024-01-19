@@ -2,13 +2,14 @@ const assert = require('assert')
 const {
     default: uuid,
     verifyChecksum,
-    uuidRegex,
-    uuidV1Regex,
-    uuidV4Regex,
-    uuidV9Regex,
-    isUUID,
+    validateUUID,
     UUIDGenerator
 } = require('../dist')
+
+const uuidRegex = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/
+const uuidV1Regex = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-1[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$/
+const uuidV4Regex = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$/
+const uuidV9Regex = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-9[0-9a-fA-F]{3}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/
 
 let sleepTimeout
 const sleep = (ms) => {
@@ -98,24 +99,6 @@ describe('uuid-v9', () => {
         assert.strictEqual(uuidV9Regex.test(id1), true)
         assert.strictEqual(uuidV9Regex.test(id2), true)
     })
-    it('should correctly validate and verify checksum', async () => {
-        const id1 = uuid('', true, true)
-        const id2 = uuid('', false, true)
-        const id3 = uuid('a1b2c3d4', true, true)
-        const id4 = uuid('a1b2c3d4', false, true)
-        assert.strictEqual(!!id1, true)
-        assert.strictEqual(!!id2, true)
-        assert.strictEqual(!!id3, true)
-        assert.strictEqual(!!id4, true)
-        assert.strictEqual(isUUID(id1), true)
-        assert.strictEqual(isUUID(id2), true)
-        assert.strictEqual(isUUID(id3), true)
-        assert.strictEqual(isUUID(id4), true)
-        assert.strictEqual(verifyChecksum(id1), true)
-        assert.strictEqual(verifyChecksum(id2), true)
-        assert.strictEqual(verifyChecksum(id3), true)
-        assert.strictEqual(verifyChecksum(id4), true)
-    })
     it('should generate backward compatible UUIDs', async () => {
         const id1 = uuid('', true, true, false, true)
         const id2 = uuid('a1b2c3d4', true, true, false, true)
@@ -133,6 +116,30 @@ describe('uuid-v9', () => {
         assert.strictEqual(uuidV1Regex.test(id2), true)
         assert.strictEqual(uuidV4Regex.test(id3), true)
         assert.strictEqual(uuidV4Regex.test(id4), true)
+    })
+    it('should correctly validate and verify checksum', async () => {
+        const id1 = uuid('', true, true)
+        const id2 = uuid('', false, true)
+        const id3 = uuid('a1b2c3d4', true, true)
+        const id4 = uuid('a1b2c3d4', false, true)
+        const id5 = uuid('', true, true, false, true)
+        const id6 = uuid('', false, true, true, true)
+        assert.strictEqual(!!id1, true)
+        assert.strictEqual(!!id2, true)
+        assert.strictEqual(!!id3, true)
+        assert.strictEqual(!!id4, true)
+        assert.strictEqual(validateUUID(id1, true), true)
+        assert.strictEqual(validateUUID(id2, true), true)
+        assert.strictEqual(validateUUID(id3, true), true)
+        assert.strictEqual(validateUUID(id4, true), true)
+        assert.strictEqual(validateUUID(id5, true, '1'), true)
+        assert.strictEqual(validateUUID(id6, true, '4'), true)
+        assert.strictEqual(verifyChecksum(id1), true)
+        assert.strictEqual(verifyChecksum(id2), true)
+        assert.strictEqual(verifyChecksum(id3), true)
+        assert.strictEqual(verifyChecksum(id4), true)
+        assert.strictEqual(verifyChecksum(id5), true)
+        assert.strictEqual(verifyChecksum(id6), true)
     })
     it('should provide a working generator utility', async () => {
         const uuid1 = UUIDGenerator({

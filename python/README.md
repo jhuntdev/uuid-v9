@@ -15,27 +15,31 @@ python3 -m pip install uuid-v9
 ## Usage
 
 ```python
-from uuid_v9 import uuid, is_uuidv9, is_uuid
+from uuid_v9 import uuid, is_valid_uuid
 
 ordered_id = uuid()
 prefixed_ordered_id = uuid('a1b2c3d4') # up to 8 hexadecimal characters
 unordered_id = uuid('', False)
 prefixed_unordered_id = uuid('a1b2c3d4', False)
-ordered_id_without_version = uuid('', True, False)
-ordered_id_with_checksum = uuid('', True, True, True)
+ordered_id_with_checksum = uuid('', True, True)
+ordered_id_with_version = uuid('', True, True, True)
+ordered_id_with_compatibility = uuid('', True, False, False, True)
 
-const is_valid_v9 = is_uuidv9(ordered_id, true) # UUID v9 validator with checksum
-const is_valid = is_uuid(ordered_id_without_version) # generic UUID validator
+const is_valid = validate_uuid(ordered_id) # build-in UUID validator
+const is_valid_with_checksum = validate_uuid(ordered_id_with_checksum, True)
+const is_valid_with_version = validate_uuid(ordered_id_with_version, True, True)
+const is_valid_with_compatibility = validate_uuid(ordered_id_with_compatibility, True, '1')
 ```
 
-### Command Line
+### Command Line Usage
 
 ```bash
 python3 uuid_v9.py
-python3 uuid_v9.py --prefix 'a1b2c3d4'
-python3 uuid_v9.py --unordered
-python3 uuid_v9.py --noversion
-python3 uuid_v9.py --checksum
+python3 uuid_v9.py --prefix 'a1b2c3d4' # add a prefix
+python3 uuid_v9.py --unordered # omit the timestamp
+python3 uuid_v9.py --checksum # add a CRC-8 checksum
+python3 uuid_v9.py --version # add a version 9 digit
+python3 uuid_v9.py --backcompat # compatibility mode (see below)
 ```
 
 ## Compatibility
