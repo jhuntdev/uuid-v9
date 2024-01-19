@@ -7,6 +7,7 @@ The v9 UUID supports both time-based sequential and random non-sequential UUIDs 
 ## Languages
 
 JavaScript/TypeScript - https://www.npmjs.com/package/uuid-v9
+
 Python - https://pypi.org/project/uuid-v9
 
 More coming soon!

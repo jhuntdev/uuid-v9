@@ -1,6 +1,6 @@
 # UUID v9
 
-The v9 UUID supports both time-based sequential and random non-sequential IDs with an optional prefix, an optional checksum, and sufficient randomness to avoid collisions.
+The v9 UUID supports both time-based sequential and random non-sequential UUIDs with an optional prefix, an optional checksum, and sufficient randomness to avoid collisions. It uses the UNIX timestamp for sequential UUIDs and CRC-8 for checksums. A version digit can be added if desired, but is omitted by default.
 
 <!-- To learn more about UUID v9, please visit the website: https://uuid-v9.jhunt.dev -->
 
@@ -46,7 +46,7 @@ Some UUID validators will not accept some v9 UUIDs. Three possible workarounds a
 2) Use compatibility mode*
 3) Bypass the validator (not recommended)
 
-*Compatibility mode adds version and variant digits to immitate v1 or v4 UUIDs based on whether or not you have a timestamp.
+_*Compatibility mode adds version and variant digits to immitate v1 or v4 UUIDs based on whether or not you have a timestamp._
 
 ## Format
 
