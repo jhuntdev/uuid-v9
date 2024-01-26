@@ -23,7 +23,7 @@ export const verifyChecksum = (uuid:string) => {
     return crc === uuid.substring(34, 36)
 }
 
-export const validateUUID = (uuid:string, checksum:boolean = false, version:boolean|number = false) => (
+export const validateUUIDv9 = (uuid:string, checksum:boolean = false, version:boolean|number = false) => (
     typeof uuid === 'string' &&
     uuidRegex.test(uuid) &&
     (!checksum || verifyChecksum(uuid)) &&
@@ -62,7 +62,7 @@ const addDashes = (str:string):string => {
     return `${str.substring(0, 8)}-${str.substring(8, 12)}-${str.substring(12, 16)}-${str.substring(16, 20)}-${str.substring(20)}`
 }
 
-const uuid = (prefix:string = '', timestamp:boolean|number = true, checksum:boolean = false, version:boolean = false, compatible:boolean = false):string => {
+const uuidv9 = (prefix:string = '', timestamp:boolean|number = true, checksum:boolean = false, version:boolean = false, compatible:boolean = false):string => {
     if (prefix) {
         validatePrefix(prefix)
         prefix = prefix.toLowerCase()
@@ -81,23 +81,23 @@ const uuid = (prefix:string = '', timestamp:boolean|number = true, checksum:bool
     return addDashes(joined)
 }
 
-export interface UUIDGeneratorConfig {
-    prefix?:string
-    timestamp?:boolean|number
-    checksum?:boolean
-    version?:boolean
-    compatible?:boolean
-}
+// export interface UUIDGeneratorConfig {
+//     prefix?:string
+//     timestamp?:boolean|number
+//     checksum?:boolean
+//     version?:boolean
+//     compatible?:boolean
+// }
 
-export const UUIDGenerator = (config:UUIDGeneratorConfig) => {
-    if (!config) throw new Error('The UUIDGenerator requires a config object')
-    return (
-        prefix:string = config.prefix || '',
-        timestamp:boolean|number = config.timestamp === false ? false : config.timestamp || true,
-        checksum:boolean = config.checksum || false,
-        version:boolean = config.version || false,
-        compatible:boolean = config.compatible || false
-    ) => uuid(prefix, timestamp, checksum, version, compatible)
-}
+// export const UUIDGenerator = (config:UUIDGeneratorConfig) => {
+//     if (!config) throw new Error('The UUIDGenerator requires a config object')
+//     return (
+//         prefix:string = config.prefix || '',
+//         timestamp:boolean|number = config.timestamp === false ? false : config.timestamp || true,
+//         checksum:boolean = config.checksum || false,
+//         version:boolean = config.version || false,
+//         compatible:boolean = config.compatible || false
+//     ) => uuid(prefix, timestamp, checksum, version, compatible)
+// }
 
-export default uuid
+export default uuidv9

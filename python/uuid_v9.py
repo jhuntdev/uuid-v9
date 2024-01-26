@@ -4,7 +4,7 @@ import time
 
 uuid_regex = re.compile(r'^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$', re.IGNORECASE)
 
-def calc_checksum(hex_string): # CRC-8
+def calc_checksum(hex_string):
     data = [int(hex_string[i:i+2], 16) for i in range(0, len(hex_string), 2)]
     polynomial = 0x07
     crc = 0x00
@@ -15,21 +15,21 @@ def calc_checksum(hex_string): # CRC-8
                 crc = (crc << 1) ^ polynomial
             else:
                 crc <<= 1
-    return format(crc & 0xFF, 'x')
+    return format(crc & 0xFF, '02x')
 
 def verify_checksum(uuid):
     clean_uuid = uuid.replace('-', '')[0:30]
     checksum = calc_checksum(clean_uuid)
     return checksum == uuid[34:36]
 
-def validate_uuid(uuid, checksum=False, version=False):
+def validate_uuidv9(uuid, checksum=False, version=False):
     return (isinstance(uuid, str) 
             and uuid_regex.match(uuid)
             and (not checksum or verify_checksum(uuid))
             and (not version or (version is True and uuid[14:15] == '9') or (
                 uuid[14:15] == str(version)
                 and ('14'.find(str(version)) == -1 or '89abAB'.find(uuid[19:20]) > -1)
-            ))
+            )))
 
 def random_bytes(count):
     return ''.join(random.choice('0123456789abcdef') for _ in range(count))
@@ -54,7 +54,7 @@ def validate_prefix(prefix):
 def add_dashes(str):
     return f'{str[:8]}-{str[8:12]}-{str[12:16]}-{str[16:20]}-{str[20:]}'
 
-def uuid(prefix='', timestamp=True, checksum=False, version=True, compatible=False):
+def uuidv9(prefix='', timestamp=True, checksum=False, version=True, compatible=False):
     if prefix:
         validate_prefix(prefix)
         prefix = prefix.lower()
@@ -79,4 +79,4 @@ if __name__ == "__main__":
     parser.add_argument("--version", dest="version", action="store_true", help="Include version")
     parser.add_argument("--backcompat", dest="backcompat", action="store_true", help="Enable compatibility mode")
     args = parser.parse_args()
-    print(uuid(args.prefix, int(args.timestamp) if args.timestamp else not args.unordered, args.checksum, args.version, args.backcompat))
+    print(uuidv9(args.prefix, int(args.timestamp) if args.timestamp else not args.unordered, args.checksum, args.version, args.backcompat))

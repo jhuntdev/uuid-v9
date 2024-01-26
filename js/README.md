@@ -20,21 +20,23 @@ yarn add uuid-v9
 ## Usage
 
 ```javascript
-import uuid, { validateUUID, UUIDGenerator } from 'uuid-v9' 
+import uuidv9, { validateUUIDv9 } from 'uuid-v9' 
 
-const orderedId = uuid()
-const prefixedOrderedId = uuid('a1b2c3d4') // up to 8 hexadecimal characters
-const unorderedId = uuid('', false)
-const prefixedUnorderedId = uuid('a1b2c3d4', false)
-const orderedIdWithChecksum = uuid('', true, true)
-const orderedIdWithVersion = uuid('', true, false, true)
-const orderedIdWithCompatibility = uuid('', true, false, false, true)
+const orderedId = uuidv9()
+const prefixedOrderedId = uuidv9('a1b2c3d4') // up to 8 hexadecimal characters
+const unorderedId = uuidv9('', false)
+const prefixedUnorderedId = uuidv9('a1b2c3d4', false)
+const orderedIdWithChecksum = uuidv9('', true, true)
+const orderedIdWithVersion = uuidv9('', true, false, true)
+const orderedIdWithCompatibility = uuidv9('', true, false, false, true)
 
-const isValid = validateUUID(orderedId) // built-in UUID validator
-const isValidWithChecksum = validate_uuid(orderedIdWithChecksum, true)
-const isValidWithVersion = validate_uuid(orderedIdWithVersion, true, true)
-const isValidWithCompatibility = validate_uuid(orderedIdWithCompatibility, true, '1')
+const isValid = validateUUIDv9(orderedId) // built-in UUID validator
+const isValidWithChecksum = validateUUIDv9(orderedIdWithChecksum, true)
+const isValidWithVersion = validateUUIDv9(orderedIdWithVersion, true, true)
+const isValidWithCompatibility = validateUUIDv9(orderedIdWithCompatibility, true, '1')
+```
 
+<!-- 
 const makeMyId = UUIDGenerator({
     prefix: '',
     timestamp: true,
@@ -44,12 +46,11 @@ const makeMyId = UUIDGenerator({
 })
 
 const myId = makeMyId() // uses defaults specified in createUUIDGenerator
-const myIdCustom = makeMyId('a1b2c3d4', false) // overrides defaults
-```
+const myIdCustom = makeMyId('a1b2c3d4', false) // overrides defaults -->
 
 ## Compatibility
 
-Some UUID validators will not accept some v9 UUIDs. Three possible workarounds are:
+Some UUID validators check for specific features of v1 or v4 UUIDs. This causes some valid v9 UUIDs to appear invalid. Three possible workarounds are:
 
 1) Use the built-in validator (recommended)
 2) Use compatibility mode*

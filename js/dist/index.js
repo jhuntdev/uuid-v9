@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.UUIDGenerator = exports.validateUUID = exports.verifyChecksum = void 0;
+exports.validateUUIDv9 = exports.verifyChecksum = void 0;
 const uuidRegex = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/;
 function calcChecksum(hexString) {
     const data = hexString.match(/.{1,2}/g).map(byte => parseInt(byte, 16));
@@ -25,14 +25,14 @@ const verifyChecksum = (uuid) => {
     return crc === uuid.substring(34, 36);
 };
 exports.verifyChecksum = verifyChecksum;
-const validateUUID = (uuid, checksum = false, version = false) => (typeof uuid === 'string' &&
+const validateUUIDv9 = (uuid, checksum = false, version = false) => (typeof uuid === 'string' &&
     uuidRegex.test(uuid) &&
     (!checksum || (0, exports.verifyChecksum)(uuid)) &&
     (!version ||
         (version === true && uuid.slice(14, 15) === '9') ||
         (uuid.slice(14, 15) === String(version) &&
             ('14'.indexOf(String(version)) === -1 || '89abAB'.indexOf(uuid.slice(19, 20)) > -1))));
-exports.validateUUID = validateUUID;
+exports.validateUUIDv9 = validateUUIDv9;
 const randomBytes = (count) => {
     let str = '';
     for (let i = 0; i < count; i++) {
@@ -58,7 +58,7 @@ const validatePrefix = (prefix) => {
 const addDashes = (str) => {
     return `${str.substring(0, 8)}-${str.substring(8, 12)}-${str.substring(12, 16)}-${str.substring(16, 20)}-${str.substring(20)}`;
 };
-const uuid = (prefix = '', timestamp = true, checksum = false, version = false, compatible = false) => {
+const uuidv9 = (prefix = '', timestamp = true, checksum = false, version = false, compatible = false) => {
     if (prefix) {
         validatePrefix(prefix);
         prefix = prefix.toLowerCase();
@@ -77,10 +77,21 @@ const uuid = (prefix = '', timestamp = true, checksum = false, version = false, 
     }
     return addDashes(joined);
 };
-const UUIDGenerator = (config) => {
-    if (!config)
-        throw new Error('The UUIDGenerator requires a config object');
-    return (prefix = config.prefix || '', timestamp = config.timestamp === false ? false : config.timestamp || true, checksum = config.checksum || false, version = config.version || false, compatible = config.compatible || false) => uuid(prefix, timestamp, checksum, version, compatible);
-};
-exports.UUIDGenerator = UUIDGenerator;
-exports.default = uuid;
+// export interface UUIDGeneratorConfig {
+//     prefix?:string
+//     timestamp?:boolean|number
+//     checksum?:boolean
+//     version?:boolean
+//     compatible?:boolean
+// }
+// export const UUIDGenerator = (config:UUIDGeneratorConfig) => {
+//     if (!config) throw new Error('The UUIDGenerator requires a config object')
+//     return (
+//         prefix:string = config.prefix || '',
+//         timestamp:boolean|number = config.timestamp === false ? false : config.timestamp || true,
+//         checksum:boolean = config.checksum || false,
+//         version:boolean = config.version || false,
+//         compatible:boolean = config.compatible || false
+//     ) => uuid(prefix, timestamp, checksum, version, compatible)
+// }
+exports.default = uuidv9;
