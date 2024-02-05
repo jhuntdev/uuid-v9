@@ -1,12 +1,12 @@
 {
   "name": "uuid-v9",
-  "version": "0.3.0",
-  "description": "The v9 UUID supports both time-based sequential and random non-sequential IDs with an optional prefix, an optional checksum, and sufficient randomness to avoid collisions.",
+  "version": "0.3.2",
+  "description": "Fast, lightweight, and dependency-free implementation of the UUID version 9 proposal for Node.js and the browser.",
   "keywords": [
     "uuid",
     "uuid-v9",
     "uuidv9",
-    "v9",
+    "uuid9",
     "prefix",
     "sequential",
     "non-sequential",

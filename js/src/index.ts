@@ -35,6 +35,8 @@ export const validateUUIDv9 = (uuid:string, checksum:boolean = false, version:bo
     )
 )
 
+export const isUUID = (uuid:string) => typeof uuid === 'string' && uuidRegex.test(uuid)
+
 const randomBytes = (count:number):string => {
     let str = ''
     for (let i = 0; i < count; i++) {

@@ -1,7 +1,7 @@
 Metadata-Version: 2.1
 Name: uuid-v9
-Version: 0.1.0
-Summary: The v9 UUID supports both time-based sequential and random non-sequential IDs with an optional prefix, an optional checksum, and sufficient randomness to avoid collisions.
+Version: 0.1.1
+Summary: Fast, lightweight, and dependency-free implementation of the UUID version 9 proposal for Python.
 Author: JHunt
 Author-email: hello@jhunt.dev
 Platform: any
@@ -15,6 +15,8 @@ Description-Content-Type: text/markdown
 License-File: LICENSE
 
 # UUID v9
+
+Fast, lightweight, and dependency-free implementation of the UUID version 9 proposal for Python.
 
 The v9 UUID supports both time-based sequential and random non-sequential UUIDs with an optional prefix, an optional checksum, and sufficient randomness to avoid collisions. It uses the UNIX timestamp for sequential UUIDs and CRC-8 for checksums. A version digit can be added if desired, but is omitted by default.
 

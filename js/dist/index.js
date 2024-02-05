@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.validateUUIDv9 = exports.verifyChecksum = void 0;
+exports.isUUID = exports.validateUUIDv9 = exports.verifyChecksum = void 0;
 const uuidRegex = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/;
 function calcChecksum(hexString) {
     const data = hexString.match(/.{1,2}/g).map(byte => parseInt(byte, 16));
@@ -33,6 +33,8 @@ const validateUUIDv9 = (uuid, checksum = false, version = false) => (typeof uuid
         (uuid.slice(14, 15) === String(version) &&
             ('14'.indexOf(String(version)) === -1 || '89abAB'.indexOf(uuid.slice(19, 20)) > -1))));
 exports.validateUUIDv9 = validateUUIDv9;
+const isUUID = (uuid) => typeof uuid === 'string' && uuidRegex.test(uuid);
+exports.isUUID = isUUID;
 const randomBytes = (count) => {
     let str = '';
     for (let i = 0; i < count; i++) {

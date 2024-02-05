@@ -5,10 +5,10 @@ with open("README.md", encoding="utf-8") as readme_file:
 
 setup(
     name="uuid-v9",
-    version="0.1.0",
+    version="0.1.1",
     author="JHunt",
     author_email="hello@jhunt.dev",
-    description="The v9 UUID supports both time-based sequential and random non-sequential IDs with an optional prefix, an optional checksum, and sufficient randomness to avoid collisions.",
+    description="Fast, lightweight, and dependency-free implementation of the UUID version 9 proposal for Python.",
     long_description=readme,
     long_description_content_type="text/markdown",
     # url="https://uuid-v9.jhunt.dev",

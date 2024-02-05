@@ -1,5 +1,7 @@
 # UUID v9
 
+Fast, lightweight, and dependency-free implementation of the UUID version 9 proposal for Node.js and the browser.
+
 The v9 UUID supports both time-based sequential and random non-sequential UUIDs with an optional prefix, an optional checksum, and sufficient randomness to avoid collisions. It uses the UNIX timestamp for sequential UUIDs and CRC-8 for checksums. A version digit can be added if desired, but is omitted by default.
 
 <!-- To learn more about UUID v9, please visit the website: https://uuid-v9.jhunt.dev -->
