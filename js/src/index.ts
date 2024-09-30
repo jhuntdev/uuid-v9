@@ -1,6 +1,6 @@
-const uuidRegex = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/
+export const uuidRegex = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/
 
-function calcChecksum(hexString:string):string { // CRC-8
+const calcChecksum = (hexString:string):string => { // CRC-8
     const data:number[] = hexString.match(/.{1,2}/g)!.map(byte => parseInt(byte, 16))
     const polynomial:number = 0x07
     let crc: number = 0x00
@@ -23,19 +23,31 @@ export const verifyChecksum = (uuid:string) => {
     return crc === uuid.substring(34, 36)
 }
 
-export const validateUUIDv9 = (uuid:string, checksum:boolean = false, version:boolean|number = false) => (
-    typeof uuid === 'string' &&
-    uuidRegex.test(uuid) &&
-    (!checksum || verifyChecksum(uuid)) &&
-    (!version ||
-        (version === true && uuid.slice(14, 15) === '9') ||
-        (uuid.slice(14, 15) === String(version) &&
-            ('14'.indexOf(String(version)) === -1 || '89abAB'.indexOf(uuid.slice(19, 20)) > -1)
+export const checkVersion = (uuid:string, version:boolean) => {
+    const versionDigit = uuid.slice(14, 15)
+    const variantDigit = uuid.slice(19, 20)
+    return (
+        (version === true && versionDigit === '9') ||
+        (versionDigit === String(version) &&
+            ('14'.indexOf(String(version)) === -1 || '89abAB'.indexOf(variantDigit) > -1)
         )
     )
-)
+}
 
 export const isUUID = (uuid:string) => typeof uuid === 'string' && uuidRegex.test(uuid)
+
+interface validateUUIDv9Options {
+    checksum?:boolean
+    version?:boolean
+}
+
+export const isValidUUIDv9 = (uuid:string, options:validateUUIDv9Options) => {
+    return (
+        isUUID(uuid) &&
+        (!options?.checksum || verifyChecksum(uuid)) &&
+        (!options?.version || checkVersion(uuid, options.version))
+    )
+}
 
 const randomBytes = (count:number):string => {
     let str = ''
@@ -64,15 +76,44 @@ const addDashes = (str:string):string => {
     return `${str.substring(0, 8)}-${str.substring(8, 12)}-${str.substring(12, 16)}-${str.substring(16, 20)}-${str.substring(20)}`
 }
 
-const uuidv9 = (prefix:string = '', timestamp:boolean|number = true, checksum:boolean = false, version:boolean = false, compatible:boolean = false):string => {
+interface UUIDv9Options {
+    prefix?:string
+    timestamp?:boolean|number|string|Date
+    checksum?:boolean
+    version?:boolean
+    legacy?:boolean
+}
+
+const defaultOptions = {
+    prefix: '',
+    timestamp: true,
+    checksum: false,
+    version: true,
+    legacy: false
+}
+
+const optionOrDefault = (name:'prefix'|'timestamp'|'checksum'|'version'|'legacy', options?:UUIDv9Options) => {
+    if (!options || options[name] === undefined) {
+        return defaultOptions[name]
+    } else {
+        return options[name]
+    }
+}
+
+export const uuidv9 = (options?:UUIDv9Options) => {
+    let prefix = String(optionOrDefault('prefix', options))
+    let timestamp = optionOrDefault('timestamp', options)
+    let checksum = optionOrDefault('checksum', options)
+    let version = optionOrDefault('version', options)
+    let legacy = optionOrDefault('legacy', options)
     if (prefix) {
         validatePrefix(prefix)
         prefix = prefix.toLowerCase()
     }
-    const center:string = typeof timestamp === 'number' ? timestamp.toString(16) : timestamp ? new Date().getTime().toString(16) : ''
-    const suffix:string = randomBytes(32 - prefix.length - center.length - (checksum ? 2 : 0) - (compatible ? 2 : version ? 1 : 0))
+    const center:string = timestamp instanceof Date ? timestamp.getTime().toString(16) : typeof timestamp === 'number' || typeof timestamp === 'string' ? new Date(timestamp).getTime().toString(16) : timestamp ? new Date().getTime().toString(16) : ''
+    const suffix:string = randomBytes(32 - prefix.length - center.length - (checksum ? 2 : 0) - (legacy ? 2 : version ? 1 : 0))
     let joined:string = prefix + center + suffix
-    if (compatible) {
+    if (legacy) {
         joined = joined.substring(0, 12) + (timestamp ? '1' : '4') + joined.substring(12, 15) + randomChar('89ab') + joined.substring(15)
     } else if (version) {
         joined = joined.substring(0, 12) + '9' + joined.substring(12)
@@ -83,23 +124,10 @@ const uuidv9 = (prefix:string = '', timestamp:boolean|number = true, checksum:bo
     return addDashes(joined)
 }
 
-// export interface UUIDGeneratorConfig {
-//     prefix?:string
-//     timestamp?:boolean|number
-//     checksum?:boolean
-//     version?:boolean
-//     compatible?:boolean
-// }
-
-// export const UUIDGenerator = (config:UUIDGeneratorConfig) => {
-//     if (!config) throw new Error('The UUIDGenerator requires a config object')
-//     return (
-//         prefix:string = config.prefix || '',
-//         timestamp:boolean|number = config.timestamp === false ? false : config.timestamp || true,
-//         checksum:boolean = config.checksum || false,
-//         version:boolean = config.version || false,
-//         compatible:boolean = config.compatible || false
-//     ) => uuid(prefix, timestamp, checksum, version, compatible)
-// }
-
-export default uuidv9
+export default {
+    uuidv9,
+    isValidUUIDv9,
+    isUUID,
+    verifyChecksum,
+    checkVersion
+}

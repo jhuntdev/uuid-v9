@@ -8,7 +8,7 @@ setup(
     version="0.1.1",
     author="JHunt",
     author_email="hello@jhunt.dev",
-    description="Fast, lightweight, and dependency-free implementation of the UUID version 9 proposal for Python.",
+    description="Fast, lightweight, zero-dependency Python implementation of the UUID version 9 proposal.",
     long_description=readme,
     long_description_content_type="text/markdown",
     # url="https://uuid-v9.jhunt.dev",

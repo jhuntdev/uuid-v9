@@ -1,8 +1,8 @@
 {
     "compilerOptions": {
-        "target": "es2018",
-        "module": "commonjs",
-        "lib": ["es2018"],
+        "target": "ES6",
+        // "module": "commonjs",
+        "lib": ["ES2023"],
         "outDir": "dist",
         "declaration": true,
         "declarationDir": "dist",

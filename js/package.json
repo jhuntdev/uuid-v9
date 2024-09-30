@@ -1,7 +1,7 @@
 {
   "name": "uuid-v9",
-  "version": "0.3.2",
-  "description": "Fast, lightweight, and dependency-free implementation of the UUID version 9 proposal for Node.js and the browser.",
+  "version": "0.4.2",
+  "description": "Fast, lightweight, zero-dependency JavaScript/TypeScript implementation of UUID version 9.",
   "keywords": [
     "uuid",
     "uuid-v9",
@@ -15,19 +15,22 @@
     "crc",
     "javascript",
     "typescript",
-    "node",
     "nodejs",
-    "node.js",
-    "jhunt"
+    "node.js"
   ],
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "./dist/cjs/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    "import": "./dist/esm/index.js",
+    "require": "./dist/cjs/index.js"
+  },
+  "type": "module",
   "repository": {
     "type": "git",
     "url": "https://github.com/jhuntdev/uuid-v9"
   },
   "scripts": {
-    "build": "tsc",
+    "build": "tsc -b ./tsconfig.cjs.json ./tsconfig.esm.json",
     "watch": "tsc -w",
     "test": "mocha ./test"
   },
