@@ -1,6 +1,6 @@
 # UUID v9
 
-Fast, lightweight, zero-dependency JavaScript/TypeScript implementation of UUID version 9.
+## Fast, lightweight, zero-dependency JavaScript/TypeScript implementation of UUID version 9
 
 The v9 UUID supports both sequential (time-based) and non-sequential (random) UUIDs with an optional prefix of up to four bytes, an optional checksum, and sufficient randomness to avoid collisions. It uses the UNIX timestamp for sequential UUIDs and CRC-8 for checksums. A version digit can be added if desired, but is omitted by default.
 
@@ -30,9 +30,9 @@ const unorderedId = uuidv9({ timestamp: false })
 const prefixedUnorderedId = uuidv9({ prefix: 'a1b2c3d4', timestamp: false })
 const orderedIdWithChecksum = uuidv9({ checksum: true })
 const orderedIdWithVersion = uuidv9({ version: true })
-const orderedIdWithCompatibility = uuidv9({ legacy: true })
+const orderedIdWithLegacyMode = uuidv9({ legacy: true })
 
-const isValid = isValidUUIDv9(orderedId) // built-in UUID validator
+const isValid = isValidUUIDv9(orderedId)
 const isValidWithChecksum = isValidUUIDv9(orderedIdWithChecksum, { checksum: true })
 const isValidWithVersion = isValidUUIDv9(orderedIdWithVersion, { version: true })
 ```
@@ -45,7 +45,7 @@ Some UUID validators check for specific features of v1 or v4 UUIDs. This causes 
 2) Use legacy mode*
 3) Bypass the validator (not recommended)
 
-_*Compatibility mode adds version and variant digits to immitate v1 or v4 UUIDs depending on whether it has a timestamp or not._
+_*Legacy mode adds version and variant digits to immitate v1 or v4 UUIDs depending on the presence of a timestamp._
 
 ## License
 

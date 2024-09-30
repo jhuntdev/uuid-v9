@@ -5,13 +5,13 @@ with open("README.md", encoding="utf-8") as readme_file:
 
 setup(
     name="uuid-v9",
-    version="0.1.1",
+    version="0.2.0",
     author="JHunt",
-    author_email="hello@jhunt.dev",
-    description="Fast, lightweight, zero-dependency Python implementation of the UUID version 9 proposal.",
+    author_email="mail@jhunt.dev",
+    description="Fast, lightweight, zero-dependency Python implementation of UUID version 9",
     long_description=readme,
     long_description_content_type="text/markdown",
-    # url="https://uuid-v9.jhunt.dev",
+    url="https://uuidv9.jhunt.dev",
     packages=["."],
     classifiers=[
         "Intended Audience :: Developers",

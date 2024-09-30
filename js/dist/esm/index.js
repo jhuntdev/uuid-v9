@@ -24,15 +24,14 @@ export const verifyChecksum = (uuid) => {
 export const checkVersion = (uuid, version) => {
     const versionDigit = uuid.slice(14, 15);
     const variantDigit = uuid.slice(19, 20);
-    return ((version === true && versionDigit === '9') ||
-        (versionDigit === String(version) &&
-            ('14'.indexOf(String(version)) === -1 || '89abAB'.indexOf(variantDigit) > -1)));
+    return ((!version || versionDigit === String(version)) &&
+        (versionDigit === '9' || ('14'.indexOf(String(versionDigit)) > -1 && '89abAB'.indexOf(variantDigit) > -1)));
 };
 export const isUUID = (uuid) => typeof uuid === 'string' && uuidRegex.test(uuid);
 export const isValidUUIDv9 = (uuid, options) => {
     return (isUUID(uuid) &&
         (!(options === null || options === void 0 ? void 0 : options.checksum) || verifyChecksum(uuid)) &&
-        (!(options === null || options === void 0 ? void 0 : options.version) || checkVersion(uuid, options.version)));
+        (!(options === null || options === void 0 ? void 0 : options.version) || checkVersion(uuid)));
 };
 const randomBytes = (count) => {
     let str = '';

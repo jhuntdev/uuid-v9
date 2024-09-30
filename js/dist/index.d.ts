@@ -1,6 +1,6 @@
 export declare const uuidRegex: RegExp;
 export declare const verifyChecksum: (uuid: string) => boolean;
-export declare const checkVersion: (uuid: string, version: boolean) => boolean;
+export declare const checkVersion: (uuid: string, version?: number) => boolean;
 export declare const isUUID: (uuid: string) => boolean;
 interface validateUUIDv9Options {
     checksum?: boolean;
@@ -20,6 +20,6 @@ declare const _default: {
     isValidUUIDv9: (uuid: string, options: validateUUIDv9Options) => boolean;
     isUUID: (uuid: string) => boolean;
     verifyChecksum: (uuid: string) => boolean;
-    checkVersion: (uuid: string, version: boolean) => boolean;
+    checkVersion: (uuid: string, version?: number | undefined) => boolean;
 };
 export default _default;

@@ -1,9 +1,10 @@
 Metadata-Version: 2.1
 Name: uuid-v9
-Version: 0.1.1
-Summary: Fast, lightweight, and dependency-free implementation of the UUID version 9 proposal for Python.
+Version: 0.2.0
+Summary: Fast, lightweight, zero-dependency Python implementation of UUID version 9
+Home-page: https://uuidv9.jhunt.dev
 Author: JHunt
-Author-email: hello@jhunt.dev
+Author-email: mail@jhunt.dev
 Platform: any
 Classifier: Intended Audience :: Developers
 Classifier: Topic :: Software Development :: Libraries
@@ -16,11 +17,11 @@ License-File: LICENSE
 
 # UUID v9
 
-Fast, lightweight, and dependency-free implementation of the UUID version 9 proposal for Python.
+Fast, lightweight, zero-dependency Python implementation of the UUID version 9 proposal.
 
-The v9 UUID supports both time-based sequential and random non-sequential UUIDs with an optional prefix, an optional checksum, and sufficient randomness to avoid collisions. It uses the UNIX timestamp for sequential UUIDs and CRC-8 for checksums. A version digit can be added if desired, but is omitted by default.
+The v9 UUID supports both sequential (time-based) and non-sequential (random) UUIDs with an optional prefix of up to four bytes, an optional checksum, and sufficient randomness to avoid collisions. It uses the UNIX timestamp for sequential UUIDs and CRC-8 for checksums. A version digit can be added if desired, but is omitted by default.
 
-<!-- To learn more about UUID v9, please visit the website: https://uuid-v9.jhunt.dev -->
+To learn more about UUID v9, please visit the website: https://uuidv9.jhunt.dev
 
 ## Installation
 
@@ -36,14 +37,14 @@ python3 -m pip install uuid-v9
 from uuid_v9 import uuidv9, is_valid_uuidv9
 
 ordered_id = uuidv9()
-prefixed_ordered_id = uuidv9('a1b2c3d4') # up to 8 hexadecimal characters
-unordered_id = uuidv9('', False)
-prefixed_unordered_id = uuidv9('a1b2c3d4', False)
-ordered_id_with_checksum = uuidv9('', True, True)
-ordered_id_with_version = uuidv9('', True, True, True)
-ordered_id_with_compatibility = uuidv9('', True, False, False, True)
+prefixed_ordered_id = uuidv9(prefix='a1b2c3d4')
+unordered_id = uuidv9(timestamp=False)
+prefixed_unordered_id = uuidv9(prefix='a1b2c3d4', timestamp=False)
+ordered_id_with_checksum = uuidv9(checksum=True)
+ordered_id_with_version = uuidv9(checksum=True, version=True)
+ordered_id_with_compatibility = uuidv9(legacy=True)
 
-const is_valid = validate_uuidv9(ordered_id) # build-in UUID validator
+const is_valid = validate_uuidv9(ordered_id)
 const is_valid_with_checksum = validate_uuidv9(ordered_id_with_checksum, True)
 const is_valid_with_version = validate_uuidv9(ordered_id_with_version, True, True)
 const is_valid_with_compatibility = validate_uuidv9(ordered_id_with_compatibility, True, '1')
@@ -54,13 +55,13 @@ const is_valid_with_compatibility = validate_uuidv9(ordered_id_with_compatibilit
 ```bash
 python3 uuid_v9.py
 python3 uuid_v9.py --prefix 'a1b2c3d4' # add a prefix
-python3 uuid_v9.py --unordered # omit the timestamp
+python3 uuid_v9.py --random # omit the timestamp
 python3 uuid_v9.py --checksum # add a CRC-8 checksum
 python3 uuid_v9.py --version # add a version 9 digit
-python3 uuid_v9.py --backcompat # compatibility mode (see below)
+python3 uuid_v9.py --legacy # legacy mode (see Backward Compatibility below)
 ```
 
-## Compatibility
+## Backward Compatibility
 
 Some UUID validators check for specific features of v1 or v4 UUIDs. This causes some valid v9 UUIDs to appear invalid. Three possible workarounds are:
 
@@ -68,13 +69,7 @@ Some UUID validators check for specific features of v1 or v4 UUIDs. This causes 
 2) Use compatibility mode*
 3) Bypass the validator (not recommended)
 
-_*Compatibility mode adds version and variant digits to immitate v1 or v4 UUIDs based on whether or not you have a timestamp._
-
-## Format
-
-Here is the UUID v9 format: `xxxxxxxx-xxxx-9xxx-8xxx-xxxxxxxxxxyy`
-
-x = prefix/timestamp/random, y = checksum (optional), 9 = version (optional), 8 = variant (compatibility mode)
+_*Legacy mode adds version and variant digits to immitate v1 or v4 UUIDs depending on the presence of a timestamp._
 
 ## License
 

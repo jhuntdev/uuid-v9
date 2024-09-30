@@ -22,7 +22,7 @@ def verify_checksum(uuid):
     checksum = calc_checksum(clean_uuid)
     return checksum == uuid[34:36]
 
-def validate_uuidv9(uuid, checksum=False, version=False):
+def is_valid_uuidv9(uuid, checksum=False, version=False):
     return (isinstance(uuid, str) 
             and uuid_regex.match(uuid)
             and (not checksum or verify_checksum(uuid))
@@ -54,14 +54,14 @@ def validate_prefix(prefix):
 def add_dashes(str):
     return f'{str[:8]}-{str[8:12]}-{str[12:16]}-{str[16:20]}-{str[20:]}'
 
-def uuidv9(prefix='', timestamp=True, checksum=False, version=True, compatible=False):
+def uuidv9(prefix='', timestamp=True, checksum=False, version=False, legacy=False):
     if prefix:
         validate_prefix(prefix)
         prefix = prefix.lower()
     center = format(int(time.time_ns() / 1000000), 'x') if timestamp is True else format(timestamp, 'x') if isinstance(timestamp, int) else ''
-    suffix = random_bytes(32 - len(prefix) - len(center) - (2 if checksum else 0) - (2 if compatible else 1 if version else 0))
+    suffix = random_bytes(32 - len(prefix) - len(center) - (2 if checksum else 0) - (2 if legacy else 1 if version else 0))
     joined = prefix + center + suffix
-    if compatible:
+    if legacy:
         joined = joined[:12] + ('1' if timestamp else '4') + joined[12:15] + random_char('89ab') + joined[15:]
     elif version:
         joined = joined[:12] + '9' + joined[12:]
@@ -72,11 +72,11 @@ def uuidv9(prefix='', timestamp=True, checksum=False, version=True, compatible=F
 if __name__ == "__main__":
     import argparse
     parser = argparse.ArgumentParser(description="Generate and validate UUID v9.")
-    parser.add_argument("--prefix", dest="prefix", default="", help="Include a prefix (default: '')")
+    parser.add_argument("--prefix", dest="prefix", default="", help="Include a prefix")
     parser.add_argument("--timestamp", dest="timestamp", help="Customize the timestamp")
-    parser.add_argument("--unordered", dest="unordered", action="store_true", help="Exclude timestamp")
+    parser.add_argument("--random", dest="random", action="store_true", help="Exclude timestamp")
     parser.add_argument("--checksum", dest="checksum", action="store_true", help="Include checksum")
     parser.add_argument("--version", dest="version", action="store_true", help="Include version")
-    parser.add_argument("--backcompat", dest="backcompat", action="store_true", help="Enable compatibility mode")
+    parser.add_argument("--legacy", dest="legacy", action="store_true", help="Legacy mode (v1/v4)")
     args = parser.parse_args()
-    print(uuidv9(args.prefix, int(args.timestamp) if args.timestamp else not args.unordered, args.checksum, args.version, args.backcompat))
+    print(uuidv9(prefix=args.prefix, timestamp=int(args.timestamp) if args.timestamp else not args.random, checksum=args.checksum, version=args.version, legacy=args.legacy))

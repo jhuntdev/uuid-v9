@@ -28,9 +28,8 @@ exports.verifyChecksum = verifyChecksum;
 const checkVersion = (uuid, version) => {
     const versionDigit = uuid.slice(14, 15);
     const variantDigit = uuid.slice(19, 20);
-    return ((version === true && versionDigit === '9') ||
-        (versionDigit === String(version) &&
-            ('14'.indexOf(String(version)) === -1 || '89abAB'.indexOf(variantDigit) > -1)));
+    return ((!version || versionDigit === String(version)) &&
+        (versionDigit === '9' || ('14'.indexOf(String(versionDigit)) > -1 && '89abAB'.indexOf(variantDigit) > -1)));
 };
 exports.checkVersion = checkVersion;
 const isUUID = (uuid) => typeof uuid === 'string' && exports.uuidRegex.test(uuid);
@@ -38,7 +37,7 @@ exports.isUUID = isUUID;
 const isValidUUIDv9 = (uuid, options) => {
     return ((0, exports.isUUID)(uuid) &&
         (!(options === null || options === void 0 ? void 0 : options.checksum) || (0, exports.verifyChecksum)(uuid)) &&
-        (!(options === null || options === void 0 ? void 0 : options.version) || (0, exports.checkVersion)(uuid, options.version)));
+        (!(options === null || options === void 0 ? void 0 : options.version) || (0, exports.checkVersion)(uuid)));
 };
 exports.isValidUUIDv9 = isValidUUIDv9;
 const randomBytes = (count) => {

@@ -1,7 +1,8 @@
 {
   "name": "uuid-v9",
-  "version": "0.4.2",
-  "description": "Fast, lightweight, zero-dependency JavaScript/TypeScript implementation of UUID version 9.",
+  "version": "0.4.4",
+  "description": "Fast, lightweight, zero-dependency JavaScript/TypeScript implementation of UUID version 9",
+  "homepage": "https://uuidv9.jhunt.dev",
   "keywords": [
     "uuid",
     "uuid-v9",
@@ -34,7 +35,7 @@
     "watch": "tsc -w",
     "test": "mocha ./test"
   },
-  "author": "JHunt <hello@jhunt.dev>",
+  "author": "JHunt <mail@jhunt.dev>",
   "license": "MIT",
   "devDependencies": {
     "mocha": "10.2.0",
