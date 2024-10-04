@@ -86,7 +86,7 @@ const defaultOptions = {
     prefix: '',
     timestamp: true,
     checksum: false,
-    version: true,
+    version: false,
     legacy: false
 }
 

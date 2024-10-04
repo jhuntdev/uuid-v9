@@ -62,7 +62,7 @@ const defaultOptions = {
     prefix: '',
     timestamp: true,
     checksum: false,
-    version: true,
+    version: false,
     legacy: false
 };
 const optionOrDefault = (name, options) => {
