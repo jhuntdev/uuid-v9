@@ -42,6 +42,6 @@ Thumbs.db
 
 # Testing specific files
 /phpunit.xml
-/tests/
+# /tests/
 /phpunit.xml.dist
 /phpunit-coverage-html/
