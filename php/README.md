@@ -1,6 +1,6 @@
 # UUID v9
 
-## Fast, lightweight, zero-dependency JavaScript/TypeScript implementation of UUID version 9
+## Fast, lightweight, zero-dependency PHP implementation of UUID version 9
 
 The v9 UUID supports both sequential (time-based) and non-sequential (random) UUIDs with an optional prefix of up to four bytes, an optional checksum, and sufficient randomness to avoid collisions. It uses the UNIX timestamp for sequential UUIDs and CRC-8 for checksums. A version digit can be added if desired, but is omitted by default.
 
@@ -8,33 +8,30 @@ To learn more about UUID v9, please visit the website: https://uuidv9.jhunt.dev
 
 ## Installation
 
-Install UUID v9 from npm
+Install UUID v9 with Composer
 
-With npm:
 ```bash
-npm install --save uuid-v9
-```
-or using yarn:
-```bash
-yarn add uuid-v9
+composer require uuidv9/uuidv9
 ```
 
 ## Usage
 
-```javascript
-import { uuidv9, isValidUUIDv9 } from 'uuid-v9' 
+```php
+require __DIR__ . '/vendor/autoload.php';
 
-const orderedId = uuidv9()
-const prefixedOrderedId = uuidv9({ prefix: 'a1b2c3d4' })
-const unorderedId = uuidv9({ timestamp: false })
-const prefixedUnorderedId = uuidv9({ prefix: 'a1b2c3d4', timestamp: false })
-const orderedIdWithChecksum = uuidv9({ checksum: true })
-const orderedIdWithVersion = uuidv9({ version: true })
-const orderedIdWithLegacyMode = uuidv9({ legacy: true })
+use UUIDv9\UUIDv9\UUIDv9;
 
-const isValid = isValidUUIDv9(orderedId)
-const isValidWithChecksum = isValidUUIDv9(orderedIdWithChecksum, { checksum: true })
-const isValidWithVersion = isValidUUIDv9(orderedIdWithVersion, { version: true })
+$orderedId = UUIDv9();
+$prefixedOrderedId = UUIDv9(['prefix' => 'a1b2c3d4']);
+$unorderedId = UUIDv9(['timestamp' => false]);
+$prefixedUnorderedId = UUIDv9(['prefix' => 'a1b2c3d4', 'timestamp' => false]);
+$orderedIdWithChecksum = UUIDv9(['checksum' => true]);
+$orderedIdWithVersion = UUIDv9(['version' => true]);
+$orderedIdWithLegacyMode = UUIDv9(['legacy' => true]);
+
+$isValid = IsValidUuidV9($orderedId);
+$isValidWithChecksum = IsValidUuidV9($orderedIdWithChecksum, ['checksum' => true]);
+$isValidWithVersion = IsValidUuidV9($orderedIdWithVersion, ['version' => true]);
 ```
 
 ## Backward Compatibility

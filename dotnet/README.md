@@ -1,6 +1,6 @@
 # UUID v9
 
-## Fast, lightweight, zero-dependency JavaScript/TypeScript implementation of UUID version 9
+## Fast, lightweight, zero-dependency .NET implementation of UUID version 9
 
 The v9 UUID supports both sequential (time-based) and non-sequential (random) UUIDs with an optional prefix of up to four bytes, an optional checksum, and sufficient randomness to avoid collisions. It uses the UNIX timestamp for sequential UUIDs and CRC-8 for checksums. A version digit can be added if desired, but is omitted by default.
 
@@ -8,33 +8,36 @@ To learn more about UUID v9, please visit the website: https://uuidv9.jhunt.dev
 
 ## Installation
 
-Install UUID v9 from npm
+Install UUID v9 from NuGet
 
-With npm:
 ```bash
-npm install --save uuid-v9
-```
-or using yarn:
-```bash
-yarn add uuid-v9
+dotnet add package UUIDv9
 ```
 
 ## Usage
 
-```javascript
-import { uuidv9, isValidUUIDv9 } from 'uuid-v9' 
+```c#
+using System;
+using UUIDv9;
 
-const orderedId = uuidv9()
-const prefixedOrderedId = uuidv9({ prefix: 'a1b2c3d4' })
-const unorderedId = uuidv9({ timestamp: false })
-const prefixedUnorderedId = uuidv9({ prefix: 'a1b2c3d4', timestamp: false })
-const orderedIdWithChecksum = uuidv9({ checksum: true })
-const orderedIdWithVersion = uuidv9({ version: true })
-const orderedIdWithLegacyMode = uuidv9({ legacy: true })
+class Program
+{
+  static void Main()
+  {
+    var orderedId = UUIDv9();
+    var prefixedOrderedId = UUIDv9(prefix: "a1b2c3d4");
+    var unorderedId = UUIDv9(timestamp: false);
+    var prefixedUnorderedId = UUIDv9(prefix: "a1b2c3d4", timestamp: false);
+    var orderedIdWithChecksum = UUIDv9(checksum: true);
+    var orderedIdWithVersion = UUIDv9(version: true);
+    var orderedIdWithLegacyMode = UUIDv9(legacy: true);
 
-const isValid = isValidUUIDv9(orderedId)
-const isValidWithChecksum = isValidUUIDv9(orderedIdWithChecksum, { checksum: true })
-const isValidWithVersion = isValidUUIDv9(orderedIdWithVersion, { version: true })
+    var isValid = IsValidUuidV9(orderedId);
+    var isValidWithChecksum = IsValidUuidV9(orderedIdWithChecksum, checksum: true);
+    var isValidWithVersion = IsValidUuidV9(orderedIdWithVersion, version: true);
+  }
+}
+
 ```
 
 ## Backward Compatibility

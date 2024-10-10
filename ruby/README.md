@@ -1,6 +1,6 @@
 # UUID v9
 
-## Fast, lightweight, zero-dependency JavaScript/TypeScript implementation of UUID version 9
+## Fast, lightweight, zero-dependency Ruby implementation of UUID version 9
 
 The v9 UUID supports both sequential (time-based) and non-sequential (random) UUIDs with an optional prefix of up to four bytes, an optional checksum, and sufficient randomness to avoid collisions. It uses the UNIX timestamp for sequential UUIDs and CRC-8 for checksums. A version digit can be added if desired, but is omitted by default.
 
@@ -8,33 +8,28 @@ To learn more about UUID v9, please visit the website: https://uuidv9.jhunt.dev
 
 ## Installation
 
-Install UUID v9 from npm
+Install UUID v9 from Rubygems
 
-With npm:
 ```bash
-npm install --save uuid-v9
-```
-or using yarn:
-```bash
-yarn add uuid-v9
+gem install uuid_v9
 ```
 
 ## Usage
 
-```javascript
-import { uuidv9, isValidUUIDv9 } from 'uuid-v9' 
+```ruby
+require 'uuid_v9'
 
-const orderedId = uuidv9()
-const prefixedOrderedId = uuidv9({ prefix: 'a1b2c3d4' })
-const unorderedId = uuidv9({ timestamp: false })
-const prefixedUnorderedId = uuidv9({ prefix: 'a1b2c3d4', timestamp: false })
-const orderedIdWithChecksum = uuidv9({ checksum: true })
-const orderedIdWithVersion = uuidv9({ version: true })
-const orderedIdWithLegacyMode = uuidv9({ legacy: true })
+ordered_id = UUIDv9::UUIDv9.generate
+prefixed_ordered_id = UUIDv9::UUIDv9.generate(prefix: 'a1b2c3d4')
+unordered_id = UUIDv9::UUIDv9.generate(timestamp: false)
+prefixed_unordered_id = UUIDv9::UUIDv9.generate(prefix: 'a1b2c3d4', timestamp: false)
+ordered_id_with_checksum = UUIDv9::UUIDv9.generate(checksum: true)
+ordered_id_with_version = UUIDv9::UUIDv9.generate(version: true)
+ordered_id_with_legacy_mode = UUIDv9::UUIDv9.generate(legacy: true)
 
-const isValid = isValidUUIDv9(orderedId)
-const isValidWithChecksum = isValidUUIDv9(orderedIdWithChecksum, { checksum: true })
-const isValidWithVersion = isValidUUIDv9(orderedIdWithVersion, { version: true })
+is_valid = UUIDv9::UUIDv9.valid?(ordered_id)
+is_valid_with_checksum = UUIDv9::UUIDv9.valid?(ordered_id_with_checksum, checksum: true)
+is_valid_with_version = UUIDv9::UUIDv9.valid?(ordered_id_with_version, version: true)
 ```
 
 ## Backward Compatibility

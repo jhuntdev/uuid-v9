@@ -23,14 +23,12 @@ export const verifyChecksum = (uuid:string) => {
     return crc === uuid.substring(34, 36)
 }
 
-export const checkVersion = (uuid:string, version:boolean) => {
+export const checkVersion = (uuid:string, version?:number) => {
     const versionDigit = uuid.slice(14, 15)
     const variantDigit = uuid.slice(19, 20)
     return (
-        (version === true && versionDigit === '9') ||
-        (versionDigit === String(version) &&
-            ('14'.indexOf(String(version)) === -1 || '89abAB'.indexOf(variantDigit) > -1)
-        )
+        (!version || versionDigit === String(version)) &&
+        (versionDigit === '9' || ('14'.indexOf(String(versionDigit)) > -1 && '89abAB'.indexOf(variantDigit) > -1))
     )
 }
 
@@ -45,7 +43,7 @@ export const isValidUUIDv9 = (uuid:string, options:validateUUIDv9Options) => {
     return (
         isUUID(uuid) &&
         (!options?.checksum || verifyChecksum(uuid)) &&
-        (!options?.version || checkVersion(uuid, options.version))
+        (!options?.version || checkVersion(uuid))
     )
 }
 
@@ -88,7 +86,7 @@ const defaultOptions = {
     prefix: '',
     timestamp: true,
     checksum: false,
-    version: true,
+    version: false,
     legacy: false
 }
 
